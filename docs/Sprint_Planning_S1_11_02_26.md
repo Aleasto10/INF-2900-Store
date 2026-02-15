@@ -4,7 +4,7 @@ In order to designate story points for our first sprint we used planning poker a
 
 In the end we decided on this Sprint Backlog:
 
-| task | story points | assigne |
+| Task | Story points | Assignee |
 |----------|----------|----------|
 | Designing the database schema  |  2  |  Anders  |
 | Setting up project structure    | 2   | Alejandro   |
