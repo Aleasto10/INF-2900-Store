@@ -41,8 +41,7 @@ CREATE TABLE carts (
 CREATE TABLE cart_items (
     cart_id         INTEGER NOT NULL,  
     product_id      INTEGER NOT NULL,  
-    item_quantity  INTEGER NOT NULL DEFAULT 0 CHECK (item_quantity >= 0), 
-    price           INTEGER NOT NULL,
+    item_quantity   INTEGER NOT NULL DEFAULT 0 CHECK (item_quantity >= 0), 
     PRIMARY KEY (cart_id, product_id),
     FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
