@@ -14,3 +14,13 @@ class Course(models.Model): #table course
 
     def __str__(self): #This is needed for printing objects/rows of this table 
         return self.title
+
+class Account(models.Model): #table account
+    name = models.CharField(max_length=100, blank=False)
+    password = models.CharField(max_length=100, blank=False)
+    email = models.CharField(max_length=100, unique=True)
+    admin_status = models.BooleanField(default=False)
+    time_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
