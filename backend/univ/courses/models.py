@@ -14,3 +14,44 @@ class Course(models.Model): #table course
 
     def __str__(self): #This is needed for printing objects/rows of this table 
         return self.title
+
+class Cart(models.Model):
+    #id #INTEGER PRIMARY KEY AUTOINCREMENT
+    account = models.ForeignKey( #INTEGER NOT NULL #FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+        'Accounts',
+        on_delete=models.CASCADE
+    )
+
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('checked_out', 'Checked Out'),
+        ('abandoned', 'Abandoned'),
+    ]
+    status = models.CharField( #TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'checked_out', 'abandoned'))
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='active'
+    )
+
+    time_created = models.DateTimeField(auto_now_add=True) #TEXT NOT NULL DEFAULT (datetime('now'))
+
+    def __str__(self):
+        return f"Cart {self.id}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey( #INTEGER NOT NULL FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE
+        Cart,
+        related_name="items",
+        on_delete=models.CASCADE
+    )
+    product = models.ForeignKey( #INTEGER NOT NULL FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+        Product,
+        on_delete=models.RESTRICT
+    )
+    item_quantity = models.PositiveIntegerField(default=1) #INTEGER NOT NULL DEFAULT 0 CHECK (item_quantity >= 0)
+    
+    class Meta: #PRIMARY KEY (cart_id, product_id)
+        unique_together = ('cart', 'product')
+
+    def __str__(self):
+        return f"{self.product.name} ({self.item_quantity})"
