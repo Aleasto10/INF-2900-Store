@@ -1,3 +1,3 @@
-# Backend Folder
+## Django template by professor Weihai
 
-This folder contains all files related to the backend of the project.
+Based on lecture videos 1 - 6
