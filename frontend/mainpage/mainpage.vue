@@ -3,7 +3,7 @@
     <navbar>
         <div class="navigationbar">
             <div class="navitem">
-                <a href="/">Home</a>
+                <a href="/mainpage.vue">Home</a>
             </div>
             <div class="navitem">
                 <a href="/products">Products</a>
@@ -43,7 +43,6 @@
         width: 100%;
         background-color: #333;
     }
-
     .navitem {
         padding: 14px 20px;
         outline-color:black;
