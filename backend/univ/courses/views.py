@@ -12,6 +12,8 @@ from .cart import (
     update_status
 )
 
+from . import product as product_service
+
 def index(request):
     return HttpResponse("courses index page")
 
@@ -76,3 +78,21 @@ def checkout(request):
 
     update_status(account, "checked_out")
     return JsonResponse({"message": "Checked out"})
+
+
+
+def product_list(request):
+    #API endpoint: /api/products/
+    products = product_service.get_all_products()
+    data = [
+        {
+            "id": p.id,
+            "name": p.name,
+            "description": p.description,
+            "price": str(p.price),        # Decimal → string for JSON
+            "stock": p.stock_quantity,
+            "origin": p.origin_country,
+        }
+        for p in products
+    ]
+    return JsonResponse(data, safe=False)
