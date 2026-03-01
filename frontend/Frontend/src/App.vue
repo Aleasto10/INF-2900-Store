@@ -1,7 +1,20 @@
-<script setup lang="ts">
-function showAlert() {
-    alert("Hello there!"); //
+<script setup lang ="ts">
+
+import { ref, onMounted} from 'vue'
+import axios from 'axios'
+
+
+const fetching = async () => {
+  try { 
+    const response = await axios.get('http://localhost:8000/api/user/')
+    console.log(response.data)
+    return response.data
+  } catch (error){
+    console.log('error')
   }
+  
+}
+    
 </script>
 
 <template> 
@@ -13,7 +26,7 @@ function showAlert() {
 <main>
   <v-text> Admin page for administrating accounts </v-text>
   <div id ="banner">
-    <btn class = "adminBtn" type = "button" @click ="showAlert()" > Add account</btn>
+    <btn class = "adminBtn" type = "button" @click ="fetching" > Add account</btn>
     <btn class = "adminBtn" type = "button" > Remove account</btn>
     <btn class = "adminBtn" type = "button" > Edit account</btn>
   </div>
@@ -24,7 +37,7 @@ function showAlert() {
 
 <style>
   .adminBtn { 
-    background-color: black;
+  background-color: black;
   border: 3px solid black;
   color: white;
   padding: 15px 32px;
