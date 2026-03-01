@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('htmlfile/', views.render_html, name='render_html'),
+    path('login/', views.login, name='login'),
     path('signup/', views.signup, name='signup'),
     #Cart
     path("api/cart/<int:account_id>/", views.get_cart),
