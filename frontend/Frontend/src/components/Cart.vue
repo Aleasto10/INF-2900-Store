@@ -96,6 +96,20 @@ async function removeItem(id: number) {
   }
 }
 
+async function checkout() {
+  try {
+    await fetch('http://localhost:8000/api/cart/checkout/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ account_id: accountId })
+    })
+    alert("Checked out successfully!")
+    fetchCart() //refresh
+  } catch (error) {
+    console.error("Error checking out", error)
+  }
+}
+
 const total = computed(() =>
   cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
 )
@@ -183,6 +197,13 @@ const total = computed(() =>
               €{{ total.toFixed(2) }}
             </span>
           </div>
+
+          <button
+            @click="checkout"
+            style="width:100%; padding:18px; background:black; color:white; border:none; border-radius:12px; font-size:16px; font-weight:500; cursor:pointer;"
+          >
+            Checkout
+          </button>
         </div>
 
       </div>
