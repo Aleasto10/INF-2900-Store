@@ -2,6 +2,7 @@
 import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
 import Cart from './components/Cart.vue'
+import addresspage from './components/addresspage.vue';
 </script>
 
 <template>
@@ -16,6 +17,7 @@ import Cart from './components/Cart.vue'
   <main>
     <TheWelcome />
     <Cart />
+    <addresspage />
   </main>
 </template>
 
