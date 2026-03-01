@@ -66,7 +66,7 @@ ROOT_URLCONF = 'univ.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates', 'templates/e_commerce_website'], # <----- This is where we will put our html files
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
