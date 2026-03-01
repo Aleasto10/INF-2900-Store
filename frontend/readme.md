@@ -1,6 +1,6 @@
 # Setting up the frameworks
 
-This folder contains all the files related to the frontend of the project. 
+- This folder contains all the files related to the frontend of the project.
 ### Virtual environment 
 - This is highly recommended for downloading the required python modules. If you have downloaded other python modules before, it might cause a compatibilty issue. 
 
