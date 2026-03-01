@@ -24,6 +24,34 @@ class Account(models.Model): #table account
 
     def __str__(self):
         return self.name
+
+class Cart(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('checked_out', 'Checked Out'),
+        ('abandoned', 'Abandoned'),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='active'
+    )
+    time_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Cart {self.id} for {self.account.name}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name="items", on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
+    item_quantity = models.PositiveIntegerField(default=1)
+    
+    class Meta:
+        unique_together = ('cart', 'product')
+
+    def __str__(self): return f"{self.product.name} ({self.item_quantity})"
     
 class Product(models.Model):
     name = models.CharField(max_length=100, blank=False)
