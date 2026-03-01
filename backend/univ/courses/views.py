@@ -3,11 +3,12 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.db import IntegrityError
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password, make_password
+from django.contrib import messages
 from .models import Course, Account
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .forms import SignUpForm
+from .forms import LoginForm, SignUpForm
 from django.shortcuts import render, redirect
 from . import account
 from .models import Account, Product, Course
@@ -43,6 +44,24 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+def login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, email=email, password=password)
+            user = account.get_account_by_email(email)
+
+            if user is not None and check_password(password, user.password):
+                messages.success(request, 'Login successful.')
+                return redirect('index')
+            else:
+                messages.error(request, 'Invalid email or password.')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
 
 # --- Cart API ---
 
