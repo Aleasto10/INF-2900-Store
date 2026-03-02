@@ -2,23 +2,23 @@
 import { ref, computed } from 'vue'
 import api from '../api'
 
-// --- Search / selection state ---
+// Search / selection state
 const searchId = ref('')
 const selectedProduct = ref<any>(null)
 const loadError = ref('')
 const statusMsg = ref('')
 
-// --- Form fields (bound to inputs via v-model) ---
+// Form fields
 const formName = ref('')
 const formDescription = ref('')
 const formPrice = ref('')
 const formStock = ref('')
 const formOrigin = ref('')
 
-// True when we loaded an existing product by ID
+// Boolean for checking if a field is edited, used to remove placeholder
 const isEditing = computed(() => selectedProduct.value !== null)
 
-// --- Look up a product by ID ---
+// Look up a product by ID
 async function lookupProduct() {
   statusMsg.value = ''
   loadError.value = ''
@@ -41,7 +41,7 @@ async function lookupProduct() {
   }
 }
 
-// --- Save: create or update ---
+// Save: create or update
 async function saveProduct() {
   statusMsg.value = ''
   loadError.value = ''
@@ -55,6 +55,7 @@ async function saveProduct() {
     if (formStock.value)       body.stock = Number(formStock.value)
     if (formOrigin.value)      body.origin = formOrigin.value
 
+    // sanity check for PATCH request
     if (Object.keys(body).length === 0) {
       statusMsg.value = 'Nothing changed — edit at least one field.'
       return
@@ -95,7 +96,7 @@ async function saveProduct() {
   }
 }
 
-// --- Delete selected product ---
+// Delete selected product
 async function deleteProduct() {
   if (!selectedProduct.value) return
   statusMsg.value = ''
@@ -130,6 +131,7 @@ function resetAll() {
   statusMsg.value = ''
   clearForm()
 }
+
 </script>
 
 <template>
