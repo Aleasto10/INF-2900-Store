@@ -1,6 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
+
 import json
 from django.db import IntegrityError
 from django.contrib.auth.hashers import check_password, make_password
@@ -147,18 +149,71 @@ def checkout(request):
 
 
 
+# --- Product API (@api_view) ---
+
+def product_to_dict(p):
+    #Convert a Product model instance to a JSON dict
+    return {
+        "id": p.id,
+        "name": p.name,
+        "description": p.description,
+        "price": str(p.price),
+        "stock": p.stock_quantity,
+        "origin": p.origin_country,
+    }
+
+
+@api_view(['GET', 'POST'])
 def product_list(request):
-    #API endpoint: /api/products/
-    products = product_service.get_all_products()
-    data = [
-        {
-            "id": p.id,
-            "name": p.name,
-            "description": p.description,
-            "price": str(p.price),        # Decimal → string for JSON
-            "stock": p.stock_quantity,
-            "origin": p.origin_country,
-        }
-        for p in products
-    ]
-    return JsonResponse(data, safe=False)
+    
+    #GET  /api/products/  → list all products
+    #POST /api/products/  → create a new product
+    
+    if request.method == 'GET':
+        products = product_service.get_all_products()
+        return Response([product_to_dict(p) for p in products])
+
+    # POST — request.data is already parsed by DRF
+    p = product_service.create_product(
+        name=request.data["name"],
+        description=request.data.get("description", ""),
+        price=request.data["price"],
+        stock=request.data.get("stock", 0),
+        origin=request.data.get("origin", ""),
+    )
+    return Response(product_to_dict(p), status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+def product_detail(request, pk):
+    
+    # GET    /api/products/<pk>/  → retrieve one product
+    # PATCH  /api/products/<pk>/  → update
+    # DELETE /api/products/<pk>/  → delete
+    
+    p = product_service.get_product_by_id(pk)
+    if p is None:
+        return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        return Response(product_to_dict(p))
+
+    if request.method == 'PATCH':
+        data = request.data
+        if "name" in data:
+            p = product_service.update_product_name(pk, data["name"])
+        if "description" in data:
+            p = product_service.update_product_description(pk, data["description"])
+        if "price" in data:
+            p = product_service.update_product_price(pk, data["price"])
+        if "stock" in data:
+            p = product_service.update_product_stock(pk, data["stock"])
+        if "origin" in data:
+            p = product_service.update_product_country(pk, data["origin"])
+        return Response(product_to_dict(p))
+
+    if request.method == 'DELETE':
+        # DELETE
+        product_service.delete_product(pk)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+

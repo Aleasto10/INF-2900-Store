@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import api from '../api'
+
 interface Product {
   id: number
   name: string
@@ -13,9 +15,8 @@ const loading = ref(true)
 const error = ref('')
 async function fetchProducts() {
   try {
-    const res = await fetch('http://localhost:8000/api/products/')//prob temp
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    products.value = await res.json()
+    const { data } = await api.get<Product[]>('/products/')
+    products.value = data
   } catch (e: any) {
     error.value = e.message
   } finally {
