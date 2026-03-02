@@ -26,7 +26,6 @@
     </div>
 </template>
 <script>
-
 </script>
 <style scoped>
     .mainpage {
@@ -35,7 +34,6 @@
         align-items: center;
         width: 100%;
     }
-
     .navigationbar {
         display: flex;
         flex-direction: row;
@@ -49,7 +47,6 @@
         outline-width: 2px;
         outline-style: solid;
     }
-
     .herobannerstyle {
         display: flex;
         flex-direction: column;

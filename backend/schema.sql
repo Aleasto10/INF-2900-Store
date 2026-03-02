@@ -55,9 +55,11 @@ CREATE TABLE orders (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     account_id      INTEGER NOT NULL,
     cart_id         INTEGER NOT NULL,
+    address_id      INTEGER,NOT NULL
     status          TEXT NOT NULL DEFAULT 'placed'
                 CHECK (status IN ('placed', 'paid', 'cancelled')),
     time_created    TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE CASCADE,
     FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
     FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE RESTRICT
 );
@@ -71,4 +73,24 @@ CREATE TABLE order_items (
     PRIMARY KEY (order_id, product_id),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT 
+);
+
+-- table for addresses, includes the address id, account id, street, city, postal code, country and references the account id as a foreign key, deletes rows referencing the account id when it is deleted
+CREATE TABLE addresses (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id      INTEGER NOT NULL,
+    street          TEXT NOT NULL,
+    city            TEXT NOT NULL,
+    postal_code     CHAR NOT NULL,
+    country         TEXT NOT NULL,
+    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+);
+
+-- table for the connection between orders and addresses, includes order id and address id, references foreign keys for both, deletes rows referencing the order id when it is deleted, deletes rows referencing the address id when it is deleted
+CREATE TABLE address_order (
+    order_id        INTEGER NOT NULL,
+    address_id      INTEGER NOT NULL,
+    PRIMARY KEY (order_id, address_id),
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE CASCADE
 );

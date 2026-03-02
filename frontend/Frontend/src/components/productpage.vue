@@ -10,11 +10,9 @@ interface Product {
   stock: number
   origin: string
 }
-
 const products = ref<Product[]>([])
 const loading = ref(true)
 const error = ref('')
-
 async function fetchProducts() {
   try {
     const { data } = await api.get<Product[]>('/products/')
@@ -25,7 +23,6 @@ async function fetchProducts() {
     loading.value = false
   }
 }
-
 onMounted(fetchProducts)
 </script>
 
@@ -50,21 +47,18 @@ onMounted(fetchProducts)
   margin: 0 auto;
   padding: 2rem;
 }
-
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 1.5rem;
   margin-top: 1.5rem;
 }
-
 .product-card {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1.5rem;
   transition: box-shadow 0.2s;
 }
-
 .product-card:hover {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
@@ -79,6 +73,4 @@ onMounted(fetchProducts)
   font-weight: bold;
   color: #263d53;
 }
-
-
 </style>

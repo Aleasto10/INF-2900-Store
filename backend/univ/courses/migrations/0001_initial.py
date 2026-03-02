@@ -48,23 +48,4 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
-        migrations.CreateModel(
-            name="Account",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("name", models.CharField(max_length=100)),
-                ("password", models.CharField(max_length=100)),
-                ("email", models.CharField(max_length=100, unique=True)),
-                ("admin_status", models.BooleanField(default=False)),
-                ("time_created", models.DateTimeField(auto_now_add=True)),
-            ],
-        ),
     ]
