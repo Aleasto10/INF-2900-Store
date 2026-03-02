@@ -20,7 +20,7 @@ async function fetchProducts() {
     const { data } = await api.get<Product[]>('/products/')
     products.value = data
   } catch (e: any) {
-    error.value = e.response?.data?.error || e.message
+    error.value = e.message
   } finally {
     loading.value = false
   }
