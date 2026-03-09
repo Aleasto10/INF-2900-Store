@@ -1,7 +1,7 @@
 from .models import Product
 
 def create_product(name, description, price, stock, origin, image=None):
-    product = Product(name=name, description=description, price=price, stock_quantity=stock, origin_country=origin, image)
+    product = Product(name=name, description=description, price=price, stock_quantity=stock, origin_country=origin, image=image)
     product.save()
     return product
 
@@ -59,7 +59,7 @@ def update_product_country(product_id, new_country):
     except Product.DoesNotExist:
         return None
 
-def update_product_image():
+def update_product_image(product_id, new_image):
     try:
         product = Product.objects.get(id=product_id)
         product.image = new_image

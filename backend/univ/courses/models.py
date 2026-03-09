@@ -38,7 +38,7 @@ class Product(models.Model):
         return self.name
 
 class Cart(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.ForeignKey("courses.Account", on_delete=models.CASCADE)
 
     STATUS_CHOICES = [
         ('active', 'Active'),
