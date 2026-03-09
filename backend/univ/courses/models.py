@@ -32,6 +32,7 @@ class Product(models.Model):
     stock_quantity = models.PositiveIntegerField(default=0)
     origin_country = models.CharField(max_length=100, blank=False)
     time_created = models.DateTimeField(auto_now_add=True)
+    image = models.URLField(blank=True)
 
     def __str__(self):
         return self.name
