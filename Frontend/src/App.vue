@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Cart from './components/Cart.vue'
-import addresspage from './pages/addresspage.vue';
+import Addresspage from './pages/addresspage.vue';
+import Index from './pages/index.vue';
+
 </script>
 
 <template>
@@ -8,16 +10,10 @@ import addresspage from './pages/addresspage.vue';
     
   </header>
 
-  <main>
-    
-      <router-link to="/admin"></router-link>
-
-      <a href ="/admin">To admin page</a>
-      <router-view></router-view>
-    
-    <Cart />
-    <addresspage />
-  </main>
+  <Index/>
+  <footer class = "footer">
+      <p> © 2026 LootBox Store. All rights reserved.</p>
+  </footer>
 </template>
 
 <style scoped>
@@ -43,4 +39,13 @@ header {
     flex-wrap: wrap;
   }
 }
+.footer {
+        margin-top: auto;
+        width: 100%;
+        padding: 1rem;
+        text-align: center;
+        background-color: #f5f5f5;
+        color: #333333;
+    }
+
 </style>
