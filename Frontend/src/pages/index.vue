@@ -1,61 +1,56 @@
 <template>
     <div class="mainpage">
-    <navbar>
-        <div class="navigationbar">
-            <div class="navitem">
-                <a href="/mainpage.vue">Home</a>
-            </div>
-            <div class="navitem">
-                <a href="/products">Products</a>
-            </div>
-            <div class="navitem">
-                <a href="/cart">Cart</a>
-            </div>
-            <div class="navitem">
-                <a href="/account">Account</a>
-            </div>
-        </div>
-    </navbar>
+    <Navigationbar/>
 
     <herobanner>
         <div class="herobannerstyle">
-            <h1>Welcome to our store!</h1>
-            <p>Explore the world through our tailored loot boxes, now featuring more countries than ever!</p>
+            <h1>Explore the world</h1>
+            <p>With our tailored loot boxes you can go further than ever without leaving your home</p>
         </div>    
     </herobanner>
+    
     </div>
 </template>
 <script>
+    import Navigationbar from '@/components/Navigationbar.vue';
+    export default {
+        name: "Index",
+        components: {
+            Navigationbar
+        }
+    }
 </script>
 <style scoped>
     .mainpage {
-        display: flex;      
+        display: flex;    
+        flex: 1;  
         flex-direction: column;
-        align-items: center;
+        align-items: left;
         width: 100%;
+        height: 400px;
+        min-height: 100vh;
     }
-    .navigationbar {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        width: 100%;
-        background-color: #333;
-    }
-    .navitem {
-        padding: 14px 20px;
-        outline-color:black;
-        outline-width: 2px;
-        outline-style: solid;
-    }
+   
     .herobannerstyle {
+        width : 100%;
+        padding: 2rem;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: left;
         justify-content: center;
-        height: 300px;
-        background-color: #f2f2f2;
+        height: 400px;
+        background-color: #000000;
         text-align: center;
-        color: #333;
+        color: #ffffff;
     }
+    .herobannerstyle h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+    .herobannerstyle p {
+        font-size: 18px;
+    }
+
+    
     
 </style>
