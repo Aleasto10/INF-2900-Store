@@ -32,12 +32,13 @@ class Product(models.Model):
     stock_quantity = models.PositiveIntegerField(default=0)
     origin_country = models.CharField(max_length=100, blank=False)
     time_created = models.DateTimeField(auto_now_add=True)
+    image = models.URLField(blank=True)
 
     def __str__(self):
         return self.name
 
 class Cart(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    account = models.ForeignKey("courses.Account", on_delete=models.CASCADE)
 
     STATUS_CHOICES = [
         ('active', 'Active'),
