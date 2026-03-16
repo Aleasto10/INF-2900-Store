@@ -78,9 +78,13 @@ CREATE TABLE order_items (
 -- table for addresses, includes the address id, account id, street, city, postal code, country and references the account id as a foreign key, deletes rows referencing the account id when it is deleted
 CREATE TABLE addresses (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name       TEXT NOT NULL,
+    email           TEXT NOT NULL,
+    phone_number    TEXT NOT NULL,
     account_id      INTEGER NOT NULL,
     street          TEXT NOT NULL,
     city            TEXT NOT NULL,
+    pstate          TEXT NOT NULL,
     postal_code     CHAR NOT NULL,
     country         TEXT NOT NULL,
     FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE

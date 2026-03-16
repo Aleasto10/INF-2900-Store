@@ -1,6 +1,5 @@
 <template>
     <div class="mainpage">
-    <Navigationbar/>
 
     <herobanner>
         <div class="herobannerstyle">
@@ -12,13 +11,7 @@
     </div>
 </template>
 <script>
-    import Navigationbar from '@/components/Navigationbar.vue';
-    export default {
-        name: "Index",
-        components: {
-            Navigationbar
-        }
-    }
+
 </script>
 <style scoped>
     .mainpage {

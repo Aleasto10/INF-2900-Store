@@ -11,14 +11,14 @@ import ProductPage from '../pages/productpage.vue'
 import Cart from '../components/Cart.vue'
 import Account from '../components/ProductManagement.vue'
 import ProductManagement from '../components/ProductManagement.vue'
-
+import addresspage from '@/pages/addresspage.vue'
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/index',
+      path: '/',
       component: Index,
     },
     { path: '/products',
@@ -28,7 +28,9 @@ const router = createRouter({
     { path: '/account',
        component: Account },
     { path: '/productmanagement',
-       component: ProductManagement }
+       component: ProductManagement },
+    { path: '/address',
+       component: addresspage }
   ],
 })
 
