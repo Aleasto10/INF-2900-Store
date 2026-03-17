@@ -9,24 +9,40 @@ interface Product {
   price: string
   stock: number
   origin: string
+  image: any
 }
 const products = ref<Product[]>([])
 const loading = ref(true)
 const error = ref('')
+
 async function fetchProducts() {
+  
   try {
     const { data } = await api.get<Product[]>('/products/')
     products.value = data
+    
   } catch (e: any) {
     error.value = e.message
   } finally {
     loading.value = false
   }
 }
+
 onMounted(fetchProducts)
 </script>
 
 <template>
+  
+  <v-container fluid: True> 
+    <v-row class ="align-start">
+      <v-col v-for="product in products" :key="product.id" class="product-card">
+                  <p>{{ product.name }}</p>
+                  <p class="picture">Product Picture</p>
+                  <p>{{ product.image }}</p>
+      </v-col>
+    </v-row>
+  </v-container>
+  <!--
   <div class="product-page">
     <h1>Products</h1>
         <div class="product-grid">
@@ -39,13 +55,16 @@ onMounted(fetchProducts)
             </div>
         </div>
   </div>
+  --->
 </template>
 
 <style scoped>
 .product-page {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
+  
+  width: 100%;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  background: #f3f3f3;
 }
 .product-grid {
   display: grid;

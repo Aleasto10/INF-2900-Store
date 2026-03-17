@@ -160,6 +160,7 @@ def product_to_dict(p):
         "price": str(p.price),
         "stock": p.stock_quantity,
         "origin": p.origin_country,
+        "image": p.image
     }
 
 
@@ -171,6 +172,7 @@ def product_list(request):
     
     if request.method == 'GET':
         products = product_service.get_all_products()
+        print(products)
         return Response([product_to_dict(p) for p in products])
 
     # POST — request.data is already parsed by DRF
