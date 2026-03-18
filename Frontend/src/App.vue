@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import Navigationbar from '@/components/Navigationbar.vue';
-
+import gridSys from '@/components/grid.vue'
 </script>
 
 <template>
+
+  <!-- What is the purpose of this header tag? -->
   <header>
     
   </header>
   
   <navigationbar/>
   <router-view/>
+  
   <footer class = "footer">
       <p> © 2026 LootBox Store. All rights reserved.</p>
   </footer>
