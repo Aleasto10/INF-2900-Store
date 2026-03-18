@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Navigationbar from '@/components/Navigationbar.vue';
-import gridSys from '@/components/grid.vue'
+
 </script>
 
 <template>
@@ -41,6 +41,7 @@ header {
     flex-wrap: wrap;
   }
 }
+
 .footer {
         margin-top: auto;
         width: 100%;
@@ -48,6 +49,7 @@ header {
         text-align: center;
         background-color: #f5f5f5;
         color: #333333;
+      
     }
 
 </style>
