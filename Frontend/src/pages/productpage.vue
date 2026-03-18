@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import api from '../api'
 import gridSys from '@/components/grid.vue'
 
+onMounted(fetchProducts)
+
 interface Product {
   id: number
   name: string
@@ -29,12 +31,13 @@ async function fetchProducts() {
   }
 }
 
-onMounted(fetchProducts)
+
 </script>
 
 <template>
   
-  <gridSys> 
+  <!--- Passing rows and cols to child component -->
+  <gridSys :rows ="3" :cols = "3"> 
     <v-hover v-slot:default="{ isHovering, props }">
             
             <v-card :class ="{'on-hover': isHovering}" v-bind="props" :elevation="isHovering ? 12 : 2">
