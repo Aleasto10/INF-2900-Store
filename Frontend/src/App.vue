@@ -3,7 +3,7 @@ import Navigationbar from './components/Navigationbar.vue';
 </script>
 
 <template>
-<v-app>
+<v-app theme="light">
     <v-app-bar>
       <navigationbar/>
     </v-app-bar>
@@ -11,11 +11,11 @@ import Navigationbar from './components/Navigationbar.vue';
     <v-main>
       <router-view/>
     </v-main>
-  </v-app>
-    <v-footer class="d-flex align-center justify-center ga-2 flex-wrap flex-grow-1 py-3" color="#f5f5f5">
-      <p> © 2026 LootBox Store. All rights reserved.</p>  
-    </v-footer>
+</v-app>
 
+<v-footer class="align-center justify-center flex-wrap" color="#f5f5f5">
+  <p> © 2026 LootBox Store. All rights reserved.</p>  
+</v-footer>
 
 </template>
 

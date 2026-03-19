@@ -52,7 +52,7 @@ const editAccount = async () => {
   }  
 }
 
-//Post
+//Post. Does admin need to create accounts? 
 const createAccount = async () => {
   try { 
     const response = await api.delete('/deleteUser/')
@@ -68,26 +68,67 @@ const createAccount = async () => {
 onMounted(() => {
   fetchUser();
 });
+
+//Just for testing. If the array is still here, deletes it. 
+const items = Array.from({ length: 1000 }, (k, v) => v + 1)
     
 </script>
 
 <template> 
-    <v-container class="text-center"> 
+
+<v-main>
     <v-sheet class="d-flex align-center justify-center text-center">
         <h2>Account admin</h2>
     </v-sheet>
-        <v-card>
-            <v-text> Admin page for administrating accounts </v-text>
 
-            <v-btn rounded="lg" color="gray" class="ma-2">Remove account</v-btn>
-            <v-btn rounded = "lg" color="gray" class="ma-2">Edit account</v-btn>
-        </v-card>
+    <v-container style="background-color: whitesmoke; border-radius: 10px; border: 2px solid black;"> 
+        <v-row> 
+            <v-col> 
+                <v-card>
+                    <v-virtual-scroll :items="items" height="320" item-height="48">
+                        
+                        <v-list>
+                            
+                            <v-list-item title="Hello" subtitle="World"> 
+                                <template v-slot:prepend> 
+                                    <v-icon>mdi-account</v-icon>
+                                </template>
+
+                                <template v-slot:append> 
+                                    <v-btn icon="mdi-pencil" size="x-small" variant="tonal"></v-btn>
+                                </template>
+                            </v-list-item>
+
+                            
+                        </v-list>
+                        
+                    </v-virtual-scroll>
+                </v-card>
+            </v-col>
         
+        <v-divider vertical class="border-opacity-100"></v-divider>
+        
+            <v-col>
+                <!-- size should be -->
+                <v-card height="320">
+                    <v-text> Account details appear here</v-text>
+                </v-card>
+            </v-col>
+        </v-row>
+        
+        <v-container class="d-flex justify-center">
+            <v-btn rounded="lg" style="background-color: whitesmoke; color: black;" class="ma-2">Delete account</v-btn>
+            <v-btn rounded = "lg" style="background-color: whitesmoke; color: black;" class="ma-2">Edit account</v-btn>
+        </v-container>
+
+        <!-- Adds button for adding account here if required -->
+
     </v-container>
+</v-main>
+
 </template>
 
 <style scoped>
 
-  
 
 </style>
