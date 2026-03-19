@@ -11,6 +11,8 @@ interface Product {
   origin: string
 }
 const products = ref<Product[]>([])
+const addingProductId = ref<number | null>(null)
+const accountId = 1 //FOR TESTING
 const loading = ref(true)
 const error = ref('')
 async function fetchProducts() {
@@ -23,7 +25,27 @@ async function fetchProducts() {
     loading.value = false
   }
 }
+
+
+async function addToCart(id: number) {
+  //add an item to the cart
+  try {
+    await fetch('http://localhost:8000/api/cart/add/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        account_id: accountId,
+        product_id: id,
+        quantity: 1
+      })
+    })
+  } catch (error) {
+    console.error("Error adding to cart", error)
+  }
+}
+
 onMounted(fetchProducts)
+
 </script>
 
 <template>
@@ -36,6 +58,11 @@ onMounted(fetchProducts)
                 <p>{{ product.description }}</p>
                 <p class="price">${{ Number(product.price).toFixed(2) }}</p>
                 <p>Stock: {{ product.stock }} &middot; Origin: {{ product.origin }}</p>
+                <button lass="add-to-cart-button":disabled="product.stock <= 0 || addingProductId === product.id"@click="addToCart(product.id)" >
+                  <span v-if="addingProductId === product.id">Adding...</span>
+                  <span v-else-if="product.stock <= 0">Out of stock</span>
+                  <span v-else>Add to Cart</span>
+                </button>
             </div>
         </div>
   </div>
@@ -72,5 +99,25 @@ onMounted(fetchProducts)
   font-size: 1.25rem;
   font-weight: bold;
   color: #263d53;
+}
+
+.add-to-cart-button {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: black;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.add-to-cart-button:hover:not(:disabled) {
+  background: #222;
+}
+
+.add-to-cart-button:disabled {
+  background: #999;
+  cursor: not-allowed;
 }
 </style>
