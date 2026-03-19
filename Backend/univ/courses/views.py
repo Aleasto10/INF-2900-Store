@@ -160,6 +160,7 @@ def product_to_dict(p):
         "price": str(p.price),
         "stock": p.stock_quantity,
         "origin": p.origin_country,
+        "image": p.image if p.image else ""
     }
 
 

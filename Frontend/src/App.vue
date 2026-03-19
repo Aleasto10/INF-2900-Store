@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import Cart from './components/Cart.vue'
-import Addresspage from './pages/addresspage.vue';
-import Index from './pages/index.vue';
-
+import Navigationbar from './components/Navigationbar.vue';
 </script>
 
 <template>
   <header>
     
   </header>
-
-  <Index/>
+  <navigationbar/>
+  <router-view/>
   <footer class = "footer">
       <p> © 2026 LootBox Store. All rights reserved.</p>
   </footer>

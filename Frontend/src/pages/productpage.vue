@@ -30,7 +30,7 @@ onMounted(fetchProducts)
   <div class="product-page">
     <h1>Products</h1>
         <div class="product-grid">
-            <div v-for="product in products" :key="product.id" class="product-card">
+            <div v-for="product in products" :key="product.id" class="product-card" @click="$router.push(`/product/${product.id}`)">
                 <h2>{{ product.name }}</h2>
                 <p class="picture">Product Picture</p>
                 <p>{{ product.description }}</p>
