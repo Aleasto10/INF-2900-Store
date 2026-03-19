@@ -11,6 +11,9 @@
         <router-link to="/account">Account</router-link>
         <router-link to="/ProductManagement">Product management</router-link>
         <router-link to="/address">Address</router-link>
+
+        <!-- added temporarily -->
+        <router-link to="/adminAccount">Admin</router-link> 
       </div>
     </div>
   </nav>
