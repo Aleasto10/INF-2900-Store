@@ -10,6 +10,7 @@
         <router-link to="/cart">&#128722</router-link>
         <router-link to="/account">Account</router-link>
         <router-link to="/ProductManagement">Product management</router-link>
+        <router-link to="/address">Address</router-link>
       </div>
     </div>
   </nav>
@@ -17,7 +18,7 @@
 
 <script>
 export default {
-  name: "Navbar"
+  name: "Navigationbar"
 }
 </script>
 
