@@ -63,7 +63,6 @@ const createAccount = async () => {
   }  
 }
 
-
 //This ensures that fetchUser will always run after opening this page
 onMounted(() => {
   fetchUser();
@@ -82,6 +81,7 @@ const items = Array.from({ length: 1000 }, (k, v) => v + 1)
     </v-sheet>
 
     <v-container style="background-color: whitesmoke; border-radius: 10px; border: 2px solid black;"> 
+        
         <v-row> 
             <v-col> 
                 <v-card>
@@ -109,7 +109,7 @@ const items = Array.from({ length: 1000 }, (k, v) => v + 1)
         <v-divider vertical class="border-opacity-100"></v-divider>
         
             <v-col>
-                <!-- size should be -->
+                
                 <v-card height="320">
                     <v-text> Account details appear here</v-text>
                 </v-card>
@@ -120,8 +120,6 @@ const items = Array.from({ length: 1000 }, (k, v) => v + 1)
             <v-btn rounded="lg" style="background-color: whitesmoke; color: black;" class="ma-2">Delete account</v-btn>
             <v-btn rounded = "lg" style="background-color: whitesmoke; color: black;" class="ma-2">Edit account</v-btn>
         </v-container>
-
-        <!-- Adds button for adding account here if required -->
 
     </v-container>
 </v-main>
