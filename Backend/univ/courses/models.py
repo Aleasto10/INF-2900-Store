@@ -70,3 +70,17 @@ class CartItem(models.Model):
         unique_together = ('cart', 'product')
 
     def __str__(self): return f"{self.product.name} ({self.item_quantity})"
+
+#Session model for storing valid login sessions
+
+class Session(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64, unique=True)
+    expires_at = models.DateTimeField()
+
+    def is_expired(self):
+        from django.utils import timezone
+        return timezone.now() >= self.expires_at
+
+    def __str__(self):
+        return f"Session for {self.account.name} (expires {self.expires_at})"
