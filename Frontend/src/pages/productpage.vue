@@ -78,6 +78,7 @@ const failToLoadImg = (index : number) =>{
                     
                     <v-img :src="product.imageURL" @error="failToLoadImg(i)"> 
                       <v-card-title style="color: black;"> {{ product.name }}</v-card-title>
+                      <v-card-title style="color: black;"> {{ product.price }}€</v-card-title>
                     </v-img> 
                 </v-card>
             
