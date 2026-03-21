@@ -12,6 +12,8 @@ import Cart from '../components/Cart.vue'
 import Account from '../components/ProductManagement.vue'
 import ProductManagement from '../components/ProductManagement.vue'
 import addresspage from '@/pages/addresspage.vue'
+import Login from '@/pages/Login.vue'
+import CreateAccount from '@/pages/CreateAccount.vue'
 
 
 const router = createRouter({
@@ -30,7 +32,12 @@ const router = createRouter({
     { path: '/productmanagement',
        component: ProductManagement },
     { path: '/address',
-       component: addresspage }
+       component: addresspage },
+    { path: '/login', 
+       component: Login },
+    { path: '/createaccount',
+       component: CreateAccount
+    }
   ],
 })
 
