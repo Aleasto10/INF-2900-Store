@@ -175,6 +175,7 @@ def product_to_dict(p):
         "price": str(p.price),
         "stock": p.stock_quantity,
         "origin": p.origin_country,
+        "image": p.image,
     }
 
 
@@ -195,6 +196,7 @@ def product_list(request):
         price=request.data["price"],
         stock=request.data.get("stock", 0),
         origin=request.data.get("origin", ""),
+        image=request.data.get("image")
     )
     return Response(product_to_dict(p), status=status.HTTP_201_CREATED)
 
@@ -225,6 +227,8 @@ def product_detail(request, pk):
             p = product_service.update_product_stock(pk, data["stock"])
         if "origin" in data:
             p = product_service.update_product_country(pk, data["origin"])
+        if "image" in data:
+            p= product_service.update_product_image(pk, data["image"])
         return Response(product_to_dict(p))
 
     if request.method == 'DELETE':
