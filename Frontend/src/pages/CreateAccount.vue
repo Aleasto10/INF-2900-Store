@@ -26,29 +26,68 @@ async function createAccount() {
 </script>
 
 <template>
-  <div style="max-width: 400px; margin: 3rem auto;">
+  <div class="create-account-page">
     <h1>Create Account</h1>
 
     <form @submit.prevent="createAccount">
-      <div>
+      <div class="form-group">
         <label>Name</label>
         <input v-model="name" type="text" placeholder="Name" />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Email</label>
         <input v-model="email" type="email" placeholder="Email" />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Password</label>
         <input v-model="password" type="password" placeholder="Password" />
       </div>
 
-      <br />
+      <div>
       <button type="submit">Create Account</button>
+      </div>
     </form>
     
     <p v-if="msg">{{ msg }}</p> 
   </div>
 </template>
+
+<style scoped>
+.create-account-page {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 2rem;
+}
+
+.form-group {
+  margin: 1rem auto;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1e7e34;
+}
+
+</style>
