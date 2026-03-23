@@ -176,10 +176,15 @@ def product_to_dict(p):
         "stock": p.stock_quantity,
         "origin": p.origin_country,
 <<<<<<< HEAD
+<<<<<<< HEAD
         "image": p.image
 =======
         "image": p.image if p.image else ""
 >>>>>>> develop
+=======
+        "image": p.image
+        "image": p.image if p.image else ""
+>>>>>>> 2135d403792c626648c233e84209b893a0473978
     }
 
 
