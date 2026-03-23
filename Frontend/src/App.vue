@@ -4,18 +4,20 @@ import Navigationbar from '@/components/Navigationbar.vue';
 </script>
 
 <template>
+<v-app theme="light">
+    <v-app-bar>
+      <navigationbar/>
+    </v-app-bar>
+  
+    <v-main>
+      <router-view/>
+    </v-main>
+</v-app>
 
-  <!-- What is the purpose of this header tag? -->
-  <header>
-    
-  </header>
-  
-  <navigationbar/>
-  <router-view/>
-  
-  <footer class = "footer">
-      <p> © 2026 LootBox Store. All rights reserved.</p>
-  </footer>
+<v-footer class="align-center justify-center flex-wrap" color="#f5f5f5">
+  <p> © 2026 LootBox Store. All rights reserved.</p>  
+</v-footer>
+
 </template>
 
 <style scoped>
@@ -41,15 +43,5 @@ header {
     flex-wrap: wrap;
   }
 }
-
-.footer {
-        margin-top: auto;
-        width: 100%;
-        padding: 1rem;
-        text-align: center;
-        background-color: #f5f5f5;
-        color: #333333;
-      
-    }
 
 </style>

@@ -14,6 +14,7 @@ const formDescription = ref('')
 const formPrice = ref('')
 const formStock = ref('')
 const formOrigin = ref('')
+const formImage = ref('')
 
 // Boolean for checking if a field is edited, used to remove placeholder
 const isEditing = computed(() => selectedProduct.value !== null)
@@ -54,6 +55,7 @@ async function saveProduct() {
     if (formPrice.value)       body.price = formPrice.value
     if (formStock.value)       body.stock = Number(formStock.value)
     if (formOrigin.value)      body.origin = formOrigin.value
+    if (formImage.value)       body.image = formImage.value
 
     // sanity check for PATCH request
     if (Object.keys(body).length === 0) {
@@ -86,6 +88,7 @@ async function saveProduct() {
         price: formPrice.value,
         stock: formStock.value ? Number(formStock.value) : 0,
         origin: formOrigin.value,
+        image: formImage.value,
       })
       statusMsg.value = `Product #${created.id} "${created.name}" created!`
       clearForm()
@@ -122,6 +125,7 @@ function clearForm() {
   formPrice.value = ''
   formStock.value = ''
   formOrigin.value = ''
+  formImage.value = ''
 }
 
 function resetAll() {
@@ -205,6 +209,14 @@ function resetAll() {
           type="text"
           :placeholder="isEditing ? selectedProduct.origin : 'Country of origin'"
         />
+      </label>
+      <label>
+       Image URL
+       <input
+          v-model="formImage"
+          type="text"
+          :placeholder="isEditing ? selectedProduct.image : 'URL of product picture'"
+          />
       </label>
     </div>
 
