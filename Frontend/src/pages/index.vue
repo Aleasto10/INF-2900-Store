@@ -7,6 +7,8 @@
             <p>With our tailored loot boxes you can go further than ever without leaving your home</p>
         </div>    
     </herobanner>
+
+    
     
     </div>
 </template>

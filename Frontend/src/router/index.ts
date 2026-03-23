@@ -13,10 +13,11 @@ import Account from '../components/ProductManagement.vue'
 import ProductManagement from '../components/ProductManagement.vue'
 import ProductDetail from '../pages/productdetail.vue'
 import addresspage from '@/pages/addresspage.vue'
+import adminAccount from '@/pages/adminAccount.vue'
 import Login from '@/pages/Login.vue'
 import CreateAccount from '@/pages/CreateAccount.vue'
 
-
+d
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -34,6 +35,8 @@ const router = createRouter({
        component: ProductDetail }
     { path: '/address',
        component: addresspage },
+   { path: '/adminAccount',
+      component: adminAccount }
     { path: '/login', 
        component: Login },
     { path: '/createaccount',

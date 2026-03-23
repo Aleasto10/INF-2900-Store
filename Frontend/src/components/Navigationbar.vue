@@ -11,6 +11,10 @@
         <router-link to="/account">Account</router-link>
         <router-link v-if="isAdmin" to="/ProductManagement">Product management</router-link>
         <router-link to="/address">Address</router-link>
+
+        <!-- added temporarily -->
+        <router-link to="/adminAccount">Admin</router-link> 
+        
         <router-link to="/login">Log-in</router-link>
       </div>
     </div>
