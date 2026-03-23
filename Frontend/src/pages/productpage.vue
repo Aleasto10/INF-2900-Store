@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '../api'
 import gridSys from '@/components/grid.vue'
 import poop from '@/assets/popp.jpeg'
