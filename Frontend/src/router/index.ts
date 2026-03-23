@@ -13,6 +13,8 @@ import Account from '../components/ProductManagement.vue'
 import ProductManagement from '../components/ProductManagement.vue'
 import ProductDetail from '../pages/productdetail.vue'
 import addresspage from '@/pages/addresspage.vue'
+import Login from '@/pages/Login.vue'
+import CreateAccount from '@/pages/CreateAccount.vue'
 
 
 const router = createRouter({
@@ -31,7 +33,12 @@ const router = createRouter({
     { path: '/product/:id',
        component: ProductDetail }
     { path: '/address',
-       component: addresspage }
+       component: addresspage },
+    { path: '/login', 
+       component: Login },
+    { path: '/createaccount',
+       component: CreateAccount
+    }
   ],
 })
 
