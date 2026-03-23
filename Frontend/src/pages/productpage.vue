@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '../api'
 
 interface Product {
@@ -9,12 +10,15 @@ interface Product {
   price: string
   stock: number
   origin: string
+  image: string
 }
 const products = ref<Product[]>([])
 const addingProductId = ref<number | null>(null)
-const accountId = 1 //FOR TESTING
+const accountId = 1 
 const loading = ref(true)
 const error = ref('')
+const router = useRouter()
+
 async function fetchProducts() {
   try {
     const { data } = await api.get<Product[]>('/products/')
@@ -26,39 +30,36 @@ async function fetchProducts() {
   }
 }
 
-
 async function addToCart(id: number) {
-  //add an item to the cart
+  addingProductId.value = id
   try {
-    await fetch('http://localhost:8000/api/cart/add/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        account_id: accountId,
-        product_id: id,
-        quantity: 1
-      })
+    await api.post('/cart/add/', {
+      account_id: accountId,
+      product_id: id,
+      quantity: 1
     })
   } catch (error) {
     console.error("Error adding to cart", error)
+  } finally {
+    addingProductId.value = null
   }
 }
 
 onMounted(fetchProducts)
-
 </script>
 
 <template>
   <div class="product-page">
     <h1>Products</h1>
         <div class="product-grid">
-            <div v-for="product in products" :key="product.id" class="product-card">
+            <div v-for="product in products" :key="product.id" class="product-card" @click="router.push(`/product/${product.id}`)">
                 <h2>{{ product.name }}</h2>
-                <p class="picture">Product Picture</p>
+                <img v-if="product.image" :src="product.image" class="picture" alt="Product Image" />
+                <p v-else class="picture">Product Picture</p>
                 <p>{{ product.description }}</p>
                 <p class="price">${{ Number(product.price).toFixed(2) }}</p>
                 <p>Stock: {{ product.stock }} &middot; Origin: {{ product.origin }}</p>
-                <button lass="add-to-cart-button":disabled="product.stock <= 0 || addingProductId === product.id"@click="addToCart(product.id)" >
+                <button class="add-to-cart-button" :disabled="product.stock <= 0 || addingProductId === product.id" @click.stop="addToCart(product.id)">
                   <span v-if="addingProductId === product.id">Adding...</span>
                   <span v-else-if="product.stock <= 0">Out of stock</span>
                   <span v-else>Add to Cart</span>
@@ -85,6 +86,7 @@ onMounted(fetchProducts)
   border-radius: 8px;
   padding: 1.5rem;
   transition: box-shadow 0.2s;
+  cursor: pointer;
 }
 .product-card:hover {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -94,13 +96,13 @@ onMounted(fetchProducts)
     font-size: 2rem;
     height: 20rem;
     width: 20rem;
+    object-fit: cover;
 }
 .price {
   font-size: 1.25rem;
   font-weight: bold;
   color: #263d53;
 }
-
 .add-to-cart-button {
   margin-top: 1rem;
   padding: 0.9rem 1rem;
@@ -111,11 +113,9 @@ onMounted(fetchProducts)
   font-size: 1rem;
   cursor: pointer;
 }
-
 .add-to-cart-button:hover:not(:disabled) {
   background: #222;
 }
-
 .add-to-cart-button:disabled {
   background: #999;
   cursor: not-allowed;

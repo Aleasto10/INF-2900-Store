@@ -9,20 +9,30 @@
         <router-link to="/">Home</router-link>
         <router-link to="/cart">&#128722</router-link>
         <router-link to="/account">Account</router-link>
-        <router-link to="/ProductManagement">Product management</router-link>
+        <router-link v-if="isAdmin" to="/ProductManagement">Product management</router-link>
         <router-link to="/address">Address</router-link>
 
         <!-- added temporarily -->
         <router-link to="/adminAccount">Admin</router-link> 
+        
+        <router-link to="/login">Log-in</router-link>
       </div>
     </div>
   </nav>
 </template>
 
-<script>
-export default {
-  name: "Navigationbar"
-}
+<script setup lang="ts">
+//checks on re-render of nav-bar if user's admin status = true, used in v-if checks on router links to
+//have access control
+import { computed } from 'vue'
+
+const account = computed(() => {
+  const raw = localStorage.getItem('account')
+  return raw ? JSON.parse(raw) : null
+})
+//to access the product management / account management after admin access control is added
+//this line can be changed to allow access under database population - admin_status === true/false
+const isAdmin = computed(() => account.value?.admin_status === false)
 </script>
 
 <style scoped>

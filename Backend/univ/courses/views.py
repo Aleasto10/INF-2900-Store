@@ -58,37 +58,52 @@ def post_user_data(request):
     return Response(data)
     return render(request, 'index.html', context) # <----- pass the "context" to the index.html file
 
+@api_view(['POST'])
 def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            #form.save()
-            name = form.cleaned_data.get('name')
-            email = form.cleaned_data.get('email')
-            raw_password = form.cleaned_data.get('password')
-            account.create_account(name=name, email=email, password=make_password(raw_password))
-            return redirect('index')
-    else:
-        form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+    #Create account - form to account service function
+    try:
+        a = account.create_account(
+            name=request.data["name"],
+            email=request.data["email"],
+            password=make_password(request.data["password"]),
+        )
+        return Response({
+            "id": a.id,
+            "name": a.name,
+            "email": a.email,
+        }, status=status.HTTP_201_CREATED)
+    except IntegrityError:
+        return Response(
+            {"error": "An account with that email already exists."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
-def login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, email=email, password=password)
-            user = account.get_account_by_email(email)
+@api_view(['POST'])
+def login_view(request):
+    #POST login - authenticate and return a session token
+    email = request.data.get("email")
+    password = request.data.get("password")
 
-            if user is not None and check_password(password, user.password):
-                messages.success(request, 'Login successful.')
-                return redirect('index')
-            else:
-                messages.error(request, 'Invalid email or password.')
-    else:
-        form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    #Sanity check for email and password in request
+    if not email or not password:
+        return Response({"error": "Email and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    #check password match to email
+    user = account.get_account_by_email(email)
+    if user is None or not check_password(password, user.password):
+        return Response({"error": "Invalid email or password."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    #create user session in backend and return relevant user info to client
+    session = account.create_session(user)
+    return Response({
+        "token": session.token,
+        "account": {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "admin_status": user.admin_status,
+        }
+    })
 
 # --- Cart API ---
 
@@ -160,6 +175,7 @@ def product_to_dict(p):
         "price": str(p.price),
         "stock": p.stock_quantity,
         "origin": p.origin_country,
+        "image": p.image if p.image else ""
     }
 
 
@@ -180,6 +196,7 @@ def product_list(request):
         price=request.data["price"],
         stock=request.data.get("stock", 0),
         origin=request.data.get("origin", ""),
+        image=request.data.get("image")
     )
     return Response(product_to_dict(p), status=status.HTTP_201_CREATED)
 
@@ -210,6 +227,8 @@ def product_detail(request, pk):
             p = product_service.update_product_stock(pk, data["stock"])
         if "origin" in data:
             p = product_service.update_product_country(pk, data["origin"])
+        if "image" in data:
+            p= product_service.update_product_image(pk, data["image"])
         return Response(product_to_dict(p))
 
     if request.method == 'DELETE':
