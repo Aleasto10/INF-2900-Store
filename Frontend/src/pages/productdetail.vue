@@ -16,6 +16,23 @@ interface Product {
 const route = useRoute()
 const router = useRouter()
 const product = ref<Product | null>(null)
+const addingProductId = ref<number | null>(null)
+const accountId = 1 
+
+async function addToCart(id: number) {
+  addingProductId.value = id
+  try {
+    await api.post('/cart/add/', {
+      account_id: accountId,
+      product_id: id,
+      quantity: 1
+    })
+  } catch (error) {
+    console.error("Error adding to cart", error)
+  } finally {
+    addingProductId.value = null
+  }
+}
 
 async function fetchProduct() {
   try {
@@ -35,18 +52,40 @@ onMounted(fetchProduct)
     <div class="card">
       
       <div class="image-container">
-        <img v-if="product.image" :src="product.image" alt="Product Image" />
+        <v-img 
+          v-if="product.image" 
+          :src="product.image" 
+          cover
+          alt="Product Image" 
+        ></v-img>
         <div v-else class="empty-image-placeholder">
           <span>📷 No Image Available</span>
         </div>
       </div>
 
       <div class="info-container">
-        <span class="stock-badge">📦 Only {{ product.stock }} left!</span>
+        <v-chip
+          color="#ffe8ec"
+          class="font-weight-bold mb-4 align-self-start"
+          style="color: #ff4d6d !important;"
+        >
+          📦 Only {{ product.stock }} left!
+        </v-chip>
+
         <h1 class="title">{{ product.name }}</h1>
         <p class="price">${{ Number(product.price).toFixed(2) }}</p>
         <p class="description">{{ product.description }}</p>
-        <button class="btn">Add to Cart 🛒</button>
+
+        <button 
+          class="add-to-cart-button" 
+          :disabled="product.stock <= 0 || addingProductId === product.id"
+          @click="addToCart(product.id)" 
+        >
+          <span v-if="addingProductId === product.id">Adding... ⏳</span>
+          <span v-else-if="product.stock <= 0">Out of stock ❌</span>
+          <span v-else>Add to Cart 🛒</span>
+        </button>
+
       </div>
 
     </div>
@@ -75,18 +114,12 @@ onMounted(fetchProduct)
   .image-container {
     flex: 1;
     display: flex;
-  }
-  .image-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    background-color: #f0f2f5;
   }
   .empty-image-placeholder {
     width: 100%;
     height: 100%;
     min-height: 400px; 
-    background-color: #f0f2f5;
-    border-right: 3px dashed #d1d8e0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -100,16 +133,6 @@ onMounted(fetchProduct)
     display: flex;
     flex-direction: column;
     justify-content: center;
-  }
-  .stock-badge {
-    align-self: flex-start;
-    background-color: #ffe8ec;
-    color: #ff4d6d;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
   }
   .title {
     font-size: 2.5rem;
@@ -129,20 +152,27 @@ onMounted(fetchProduct)
     line-height: 1.6;
     margin-bottom: 2rem;
   }
-  .btn {
-    background-color: #2b2d42;
-    color: white;
+  .add-to-cart-button {
+    margin-top: 1rem;
+    padding: 1rem 2rem;
     border: none;
     border-radius: 16px;
-    padding: 1rem 2rem;
+    background: #2b2d42;
+    color: white;
     font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.2s, background-color 0.2s;
     box-shadow: 0 4px 15px rgba(43, 45, 66, 0.3);
   }
-  .btn:hover {
-    background-color: #1a1b28;
+  .add-to-cart-button:hover:not(:disabled) {
+    background: #1a1b28;
     transform: translateY(-2px);
+  }
+  .add-to-cart-button:disabled {
+    background: #999;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
   }
 </style>

@@ -21,7 +21,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/',
-       component: Index, },
+      component: Index },
     { path: '/products',
        component: ProductPage },
     { path: '/cart',
@@ -37,8 +37,9 @@ const router = createRouter({
     { path: '/login', 
        component: Login },
     { path: '/createaccount',
-       component: CreateAccount
-    }
+       component: CreateAccount },
+    { path: '/product/:id',
+       component: () => import('../pages/productdetail.vue') },
   ],
 })
 
