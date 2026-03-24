@@ -13,8 +13,9 @@ import { createApp } from 'vue'
 
 import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
+import * as components from 'vuetify/components'
 
-const vuetify = createVuetify()
+const vuetify = createVuetify({ components })
 
 const app = createApp(App)
 
