@@ -8,7 +8,7 @@ import poop from '@/assets/popp.jpeg'
 
 //Removes this and change the variable in template for using the images from the server
 const testProducts: Product[] = [
-  { id: 1, name: 'Norway', description: '', price: '12.99', stock: 10, origin: 'Norwat', imageURL: 'https://picsum.photos/seed/coffee/200' },
+  { id: 1, name: 'Norway', description: '', price: '12.99', stock: 10, origin: 'Norwat', image: 'https://picsum.photos/seed/coffee/200' },
   { id: 2, name: 'Japan',    description: '',    price: '8.99',  stock: 5,  origin: 'Japan',    imageURL: 'https://picsum.photos/seed/tea/200' },
   { id: 3, name: 'Sweden',     description: '',    price: '4.99',  stock: 20, origin: 'Sweden',   imageURL: 'https://picsum.photos/seed/milk/200' },
   { id: 4, name: 'Sweden',     description: '',    price: '4.99',  stock: 20, origin: 'Sweden',   imageURL: 'https://picsum.photos/seed/milk/200' },
@@ -33,7 +33,7 @@ interface Product {
   price: string
   stock: number
   origin: string
-  imageURL: string
+  image: string
 }
 
 
@@ -58,7 +58,7 @@ async function fetchProducts() {
 const failToLoadImg = (index : number) =>{ 
   
   if(products.value[index]) { 
-    products.value[index].imageURL = poop
+    products.value[index].image = poop
   }
   
 }
@@ -73,11 +73,11 @@ const failToLoadImg = (index : number) =>{
       <!-- Change "testProducts" to "products" to use images from server-->
        
       <v-row>
-        <v-col v-for="(product, i) in testProducts" :key="product.id" cols="4">
+        <v-col v-for="(product, i) in products" :key="product.id" cols="4">
           <v-hover v-slot:default="{ isHovering, props }">
                 <v-card  :class="{'on-hover': isHovering}" v-bind="props" :elevation="isHovering ? 12 : 2">
                     
-                    <v-img :src="product.imageURL" @error="failToLoadImg(i)"> 
+                    <v-img :src="product.image" @error="failToLoadImg(i)"> 
                       <v-card-title style="color: black;"> {{ product.name }}</v-card-title>
                       <v-card-title style="color: black;"> {{ product.price }}€</v-card-title>
                     </v-img> 

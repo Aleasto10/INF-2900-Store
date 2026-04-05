@@ -2,6 +2,21 @@
 
 This document describes the methodology around the configuration management we will follow.
 
+## Coding standards
+
+### Comments
+
+Code should be well commented with frequent and descriptive comments.
+
+Functions should have a comment describing its purpose, the inputs and outputs in detail.
+
+
+### Consistent naming
+
+For python files we will name variables and functions **snake_case**
+
+For vue files variables and functions will use **camelCase**
+
 ## Branching Methodology
 
 The branching methodology for this project will be as follows:
@@ -12,7 +27,9 @@ The branching methodology for this project will be as follows:
 
 ### Support branches
 
-Each task will have its own branch that will be named after the task it is associated with.
+Each task will have its own branch that will be named after the task it is associated with using this format:
+
+*Issue#*-*name*-*of*-*issue*
 
 After the task is finished a pull request to develop is created and, after approval, merged into develop.
 
@@ -20,6 +37,33 @@ After the task is finished a pull request to develop is created and, after appro
 
 If unexpected bugs get found after merging then a bugfix task will be created and a branch will be made.
 
-If the bug is on develop then the branch will be named **bugfix/descriptive-name-of-the-bug** after the bug is fixed a pull request is created and merged after approval.
+## Commit messages
 
-If the bug is on main the branch will be named **hotfix/descriptive-name-of-the-bug** after the bug is fixed a pull request is created to main and merged after approval.
+Commit messages will have two parts a *type* and the *description*.
+
+```
+<type>: <description>
+```
+
+Where:
+
+- `<type>` Will be one of the following:
+    - `fix` For fixing errors.
+    - `feat` For new features.
+    - `build` For changes in compilation or external dependancies.
+    - `chore` For maintenance tasks that do not affect code.
+    - `docs` For document tasks.
+    - `style` For styling changes.
+    - `refactor` For refactoring.
+    - `test` For adding or modifying tests.
+- `<description>` Is a small description about the changes made.
+
+## Reviews
+
+If the review is `approved`:
+
+The approval message must include a brief explanation on how the implementation was tested and that it works.
+
+If the review is `request changes`:
+
+The request changes message must include what features did not work, and what changes need to be made.
