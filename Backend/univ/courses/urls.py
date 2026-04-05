@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('htmlfile/', views.render_html, name='render_html'),
     path('api/login/', views.login_view, name='login'),
+    path('api/logout/', views.logout_view, name='logout'),
     path('api/signup/', views.signup, name='signup'),
     #Cart
     path("api/cart/<int:account_id>/", views.get_cart),

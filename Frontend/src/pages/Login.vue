@@ -21,7 +21,7 @@ async function login() {
     localStorage.setItem('account', JSON.stringify(data.account))
 
     msg.value = `Welcome, ${data.account.name}!`
-    router.push('/')
+    window.location.href = '/'
   } catch (e: any) {
     msg.value = e.message
   }
