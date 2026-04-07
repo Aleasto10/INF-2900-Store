@@ -105,6 +105,16 @@ def login_view(request):
         }
     })
 
+
+# POST logout - delete session token
+@api_view(['POST'])
+def logout_view(request):
+    token = request.data.get("token")
+    if not token:
+        return Response({"error": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    account.delete_session(token)
+    return Response({"message": "Logged out successfully."})
+
 # --- Cart API ---
 
 def get_cart(request, account_id):

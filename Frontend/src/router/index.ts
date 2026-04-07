@@ -9,7 +9,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Index from '@/pages/index.vue'
 import ProductPage from '../pages/productpage.vue'
 import Cart from '../components/Cart.vue'
-import Account from '../components/ProductManagement.vue'
+import Account from '@/pages/index.vue'
 import ProductManagement from '../components/ProductManagement.vue'
 import ProductDetail from '../pages/productdetail.vue'
 import addresspage from '@/pages/addresspage.vue'
@@ -43,6 +43,35 @@ const router = createRouter({
     { path: '/product/:id',
        component: () => import('../pages/productdetail.vue') },
   ],
+})
+
+
+// Navigation guard to check for admin access and protected routes
+router.beforeEach((to, from, next) => {
+  const protectedRoutes = ['/cart', '/address', '/account']
+  const adminRoutes = ['/productmanagement', '/adminAccount']
+  if (protectedRoutes.includes(to.path)) {
+    const account = localStorage.getItem('account')
+    if (!account) {
+      next('/login')
+    } else {
+      next()
+    }
+  } else if (adminRoutes.includes(to.path)) {
+    const account = localStorage.getItem('account')
+    if (account) {
+      const parsed = JSON.parse(account)
+      if (parsed.admin_status === true) {
+        next()
+      } else {
+        next('/')
+      }
+    } else {
+      next('/login')
+    }
+  } else {
+    next()
+  }
 })
 
 export default router
