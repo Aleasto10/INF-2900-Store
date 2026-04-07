@@ -127,7 +127,8 @@ def get_cart(request, account_id):
             "product_id": item.product.id,
             "name": item.product.name,
             "price": float(item.product.price),
-            "quantity": item.item_quantity
+            "quantity": item.item_quantity,
+            "image": item.product.image
         })
 
     return JsonResponse({
