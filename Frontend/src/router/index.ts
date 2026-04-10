@@ -21,9 +21,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/',
-      component: Index },
-    { path: '/products',
-       component: ProductPage },
+      component: ProductPage },
     { path: '/cart',
        component: Cart },
     { path: '/account',
