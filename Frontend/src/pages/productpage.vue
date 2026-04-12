@@ -36,9 +36,7 @@ interface Product {
   image: string
 }
 
-
-
-//Sending a GET request for getting the data from "course_product" table
+//Sending a GET request for getting the data from product table
 async function fetchProducts() {
   
   try {
