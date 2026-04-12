@@ -9,7 +9,7 @@ from .account import (
 from .product import (
     create_product, update_product_name, update_product_description,
     update_product_price, update_product_stock, update_product_country,
-    delete_product
+    update_product_image, delete_product
 )
 
 
@@ -26,7 +26,16 @@ def admin_create_product(account_id, name, description, price, stock, origin, im
     return create_product(name, description, price, stock, origin, image)
 
 
-def admin_update_product(account_id, product_id, name=None, description=None, price=None, stock=None, origin=None):
+def admin_update_product(
+    account_id,
+    product_id,
+    name=None,
+    description=None,
+    price=None,
+    stock=None,
+    origin=None,
+    image=None,
+):
     if not is_admin(account_id):
         raise PermissionError("Only admins can update products.")
     updated = False
@@ -44,6 +53,9 @@ def admin_update_product(account_id, product_id, name=None, description=None, pr
         updated = True
     if origin is not None:
         update_product_country(product_id, origin)
+        updated = True
+    if image is not None:
+        update_product_image(product_id, image)
         updated = True
     return updated
 

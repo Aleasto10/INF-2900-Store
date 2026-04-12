@@ -62,7 +62,7 @@ class AdminServiceTests(TestCase):
             price=Decimal("1.00"),
             stock=1,
             origin="norway",
-            image=self.IMAGE_URL,
+            image="https://example.com/old.jpg",
         )
 
         admin_service.admin_update_product(
@@ -73,6 +73,7 @@ class AdminServiceTests(TestCase):
             price=Decimal("2.50"),
             stock=10,
             origin="sweden",
+            image="https://example.com/new.jpg"
         )
 
         refreshed = product_service.get_product_by_id(p.id)
@@ -81,6 +82,7 @@ class AdminServiceTests(TestCase):
         self.assertEqual(refreshed.price, Decimal("2.50"))
         self.assertEqual(refreshed.stock_quantity, 10)
         self.assertEqual(refreshed.origin_country, "sweden")
+        self.assertEqual(refreshed.image, "https://example.com/new.jpg") 
 
     def test_admin_update_product_permission_denied(self):
         p = product_service.create_product(
