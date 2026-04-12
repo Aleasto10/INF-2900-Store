@@ -9,7 +9,7 @@ from .account import (
 from .product import (
     create_product, update_product_name, update_product_description,
     update_product_price, update_product_stock, update_product_country,
-    delete_product
+    update_product_image, delete_product
 )
 
 
@@ -20,14 +20,22 @@ def is_admin(account_id):
     return False
 
 
-
-def admin_create_product(account_id, name, description, price, stock, origin):
+def admin_create_product(account_id, name, description, price, stock, origin, image):
     if not is_admin(account_id):
         raise PermissionError("Only admins can create products.")
-    return create_product(name, description, price, stock, origin)
+    return create_product(name, description, price, stock, origin, image)
 
 
-def admin_update_product(account_id, product_id, name=None, description=None, price=None, stock=None, origin=None):
+def admin_update_product(
+    account_id,
+    product_id,
+    name=None,
+    description=None,
+    price=None,
+    stock=None,
+    origin=None,
+    image=None,
+):
     if not is_admin(account_id):
         raise PermissionError("Only admins can update products.")
     updated = False
@@ -46,14 +54,17 @@ def admin_update_product(account_id, product_id, name=None, description=None, pr
     if origin is not None:
         update_product_country(product_id, origin)
         updated = True
-    return updated  
+    if image is not None:
+        update_product_image(product_id, image)
+        updated = True
+    return updated
 
 
 def admin_delete_product(account_id, product_id):
     if not is_admin(account_id):
         raise PermissionError("Only admins can delete products.")
     try:
-        return delete_product(product_id)  
+        return delete_product(product_id)
     except IntegrityError:
         raise ValueError("Cannot delete product because it is referenced by carts/orders.")
 
@@ -88,5 +99,4 @@ def admin_delete_account(account_id, target_account_id):
         raise PermissionError("Only admins can delete accounts.")
     if account_id == target_account_id:
         raise PermissionError("You cannot delete your own account.")
-    return delete_account(target_account_id)  
-
+    return delete_account(target_account_id)
