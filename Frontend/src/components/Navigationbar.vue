@@ -8,21 +8,22 @@
     <!-- Search bar-->
     <v-card>
       <v-autocomplete
-      v-model:search="searchInput" 
-      label="Search for products" 
-      :items = "filteredItems"
-      :loading = "loading"
+      v-model:search="searchInput"
+      :items="filteredItems"
+      :loading="loading"
       autocomplete="off"
-      style = "width: 400px;"
+      class="mx-auto"
+      density="comfortable"
+      label="search for a product"
+      placeholder="Start typing..."
+      style="width: 300px"
       prepend-inner-icon="mdi-magnify"
-      hide-no-data
       hide-details
+      hide-no-data
       >
 
       </v-autocomplete>
     </v-card> 
-
-
 
     <v-sheet class="nav-links">
       <router-link to="/">Home</router-link>
@@ -50,11 +51,16 @@ import api from '../api'
 import { de, tr } from 'vuetify/locale'
 import { filterItems } from 'vuetify/lib/composables/filter.mjs'
 
+//For loading icon
 const loading = ref(false)
 const products = ref<Product[]>()
+
+//For input from search bar
 const searchInput = ref('')
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
-const filteredItems = ref<string[]>([])
+
+//array of filtered items from products. Currently as an array of product names
+const filteredItems = ref<string[]>([]) 
 
 //const router = useRouter()
 
@@ -76,7 +82,7 @@ interface Product {
   image: string
 }
 
-//Delays the search for 300 ms after a key is typed in 
+//Delays the search for 300 ms after a key is typed. This is used only for the search bar 
 watch(searchInput, (val) => {
   clearTimeout(debounceTimer!)
   try {
@@ -96,10 +102,10 @@ watch(searchInput, (val) => {
   }
 })
 
-
-
-//Sending a GET request for getting the data from product table
+//Sending a GET request for getting the records from product table
 async function fetchProducts() {
+  loading.value = true
+
   try {
     const { data } = await api.get<Product[]>('/products/')
     products.value = data 
@@ -180,4 +186,5 @@ cursor: pointer;
 .nav-links button:hover {
 color: #616461;
 }
+
 </style>

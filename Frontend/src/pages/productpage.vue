@@ -41,7 +41,7 @@ async function fetchProducts() {
   
   try {
     const { data } = await api.get<Product[]>('/products/')
-    products.value = data
+    products.value = data // This is an array of records from product table
 
   } catch (e: any) {
     error.value = e.message
