@@ -36,14 +36,12 @@ interface Product {
   image: string
 }
 
-
-
-//Sending a GET request for getting the data from "course_product" table
+//Sending a GET request for getting the data from product table
 async function fetchProducts() {
   
   try {
     const { data } = await api.get<Product[]>('/products/')
-    products.value = data
+    products.value = data // This is an array of records from product table
 
   } catch (e: any) {
     error.value = e.message
