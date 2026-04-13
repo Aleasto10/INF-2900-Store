@@ -1,5 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+
+type StoredAccount = {
+  id: number
+  name?: string
+  email?: string
+}
+
+type SavedAddress = {
+  id: number
+  account_id: number
+  line1: string
+  line2: string
+  city: string
+  state: string
+  postal_code: string
+  country: string
+}
 
 const fullName = ref('')
 const email = ref('')
@@ -11,9 +28,72 @@ const state = ref('')
 const zipCode = ref('')
 const country = ref('United States')
 
-const submitAddress = () => {
-  console.log('Address submitted:')
-  console.log({
+const rememberAddress = ref(false)
+
+const savedAccount = ref<StoredAccount | null>(null)
+const savedAddress = ref<SavedAddress | null>(null)
+
+const hasAutofillPreview = computed(() => {
+  return !!(
+    savedAccount.value?.name ||
+    savedAccount.value?.email ||
+    savedAddress.value
+  )
+})
+
+onMounted(() => {
+  const storedAccount = localStorage.getItem('account')
+
+  if (storedAccount) {
+    try {
+      savedAccount.value = JSON.parse(storedAccount)
+    } catch {
+      savedAccount.value = null
+    }
+  }
+
+  loadSavedAddress()
+})
+
+const loadSavedAddress = async () => {
+  try {
+    const storedAccount = localStorage.getItem('account')
+    if (!storedAccount) return
+
+    const account = JSON.parse(storedAccount) as StoredAccount
+
+    const response = await fetch(`http://127.0.0.1:8000/api/accounts/${account.id}/addresses/`)
+    const data = await response.json()
+
+    if (response.ok && Array.isArray(data) && data.length > 0) {
+      savedAddress.value = data[data.length - 1]
+    } else {
+      savedAddress.value = null
+    }
+  } catch (error) {
+    console.error('Failed to load saved addresses:', error)
+    savedAddress.value = null
+  }
+}
+
+const applyAutofill = () => {
+  if (savedAccount.value) {
+    fullName.value = savedAccount.value.name || ''
+    email.value = savedAccount.value.email || ''
+  }
+
+  if (savedAddress.value) {
+    streetAddress.value = savedAddress.value.line1 || ''
+    apartment.value = savedAddress.value.line2 || ''
+    city.value = savedAddress.value.city || ''
+    state.value = savedAddress.value.state || ''
+    zipCode.value = savedAddress.value.postal_code || ''
+    country.value = savedAddress.value.country || ''
+  }
+}
+
+const submitAddress = async () => {
+  const payload = {
     fullName: fullName.value,
     email: email.value,
     phoneNumber: phoneNumber.value,
@@ -23,7 +103,62 @@ const submitAddress = () => {
     state: state.value,
     zipCode: zipCode.value,
     country: country.value
-  })
+  }
+
+  console.log('Address form submitted:')
+  console.log(payload)
+
+  if (!rememberAddress.value) {
+    alert('Address not saved. Check "Remember this address for later" if you want to store it.')
+    return
+  }
+
+  const storedAccount = localStorage.getItem('account')
+  if (!storedAccount) {
+    alert('No logged in account found.')
+    return
+  }
+
+  const account = JSON.parse(storedAccount) as StoredAccount
+
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/api/accounts/${account.id}/addresses/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        line1: streetAddress.value,
+        line2: apartment.value,
+        city: city.value,
+        state: state.value,
+        postal_code: zipCode.value,
+        country: country.value
+      })
+    })
+
+    const text = await response.text()
+    let data: any
+
+    try {
+      data = JSON.parse(text)
+    } catch {
+      data = { error: text }
+    }
+
+    if (!response.ok) {
+      console.error('Backend error:', data)
+      alert(data.error || 'Failed to save address')
+      return
+    }
+
+    await loadSavedAddress()
+    alert('Address saved successfully')
+    console.log('Saved address:', data)
+  } catch (error) {
+    console.error('Failed to save address:', error)
+    alert('Something went wrong while saving the address')
+  }
 }
 </script>
 
@@ -31,8 +166,20 @@ const submitAddress = () => {
   <div class="address-page">
     <div class="address-card">
       <div class="card-header">
-        <div class="icon-box">📦</div>
         <h1>Shipping Address</h1>
+      </div>
+
+      <div v-if="hasAutofillPreview" class="autofill-preview" @click="applyAutofill">
+        <div class="autofill-preview-text">
+          <strong>Saved info</strong>
+          <p v-if="savedAccount?.name || savedAccount?.email">
+            {{ savedAccount?.name }}<span v-if="savedAccount?.name && savedAccount?.email"> · </span>{{ savedAccount?.email }}
+          </p>
+          <p v-if="savedAddress">
+            {{ savedAddress.line1 }}, {{ savedAddress.city }}, {{ savedAddress.country }}
+          </p>
+        </div>
+        <button type="button" class="autofill-button">Use</button>
       </div>
 
       <form class="address-form" @submit.prevent="submitAddress">
@@ -140,8 +287,15 @@ const submitAddress = () => {
           </div>
         </div>
 
+        <div class="remember-row">
+          <label class="remember-label">
+            <input type="checkbox" v-model="rememberAddress" />
+            Remember this address for later
+          </label>
+        </div>
+
         <div class="form-actions">
-          <button type="submit">Save Address</button>
+          <button type="submit">Go to payment</button>
         </div>
       </form>
     </div>
@@ -190,6 +344,34 @@ const submitAddress = () => {
   font-size: 22px;
   font-weight: 700;
   color: #111;
+}
+
+.autofill-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  padding: 16px 18px;
+  border: 1px solid #d0d0d0;
+  border-radius: 14px;
+  background: #fcfcfc;
+  cursor: pointer;
+}
+
+.autofill-preview-text p {
+  margin: 6px 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.autofill-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
 }
 
 .address-form {
@@ -246,6 +428,18 @@ const submitAddress = () => {
   border-color: #8a8a8a;
 }
 
+.remember-row {
+  margin-top: -6px;
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #111;
+}
+
 .form-actions {
   margin-top: 8px;
 }
@@ -278,6 +472,11 @@ const submitAddress = () => {
 
   .address-card {
     padding: 22px 18px;
+  }
+
+  .autofill-preview {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

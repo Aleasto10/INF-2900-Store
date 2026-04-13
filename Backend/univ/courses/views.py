@@ -14,6 +14,8 @@ from .forms import LoginForm, SignUpForm
 from django.shortcuts import render, redirect
 from . import account
 from .models import Account, Product, Course
+from .models import Course, Account, Address
+from . import address as address_service
 from .cart import (
     get_or_create_cart,
     add_product_to_cart,
@@ -248,4 +250,40 @@ def product_detail(request, pk):
         # DELETE
         product_service.delete_product(pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+# -- Address API (@api_view) ---
 
+def address_to_dict(a):
+    return {
+        "id": a.id,
+        "account_id": a.account.id,
+        "line1": a.line1,
+        "line2": a.line2,
+        "city": a.city,
+        "state": a.state,
+        "postal_code": a.postal_code,
+        "country": a.country,
+    }
+
+
+@api_view(['GET', 'POST'])
+def address_list(request, account_id):
+    try:
+        acc = Account.objects.get(id=account_id)
+    except Account.DoesNotExist:
+        return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        addresses = address_service.get_addresses_for_account(acc)
+        return Response([address_to_dict(a) for a in addresses])
+
+    a = address_service.create_address(
+        account=acc,
+        line1=request.data["line1"],
+        line2=request.data.get("line2", ""),
+        city=request.data["city"],
+        state=request.data["state"],
+        postal_code=request.data["postal_code"],
+        country=request.data["country"],
+    )
+    return Response(address_to_dict(a), status=status.HTTP_201_CREATED)
