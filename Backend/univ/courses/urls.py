@@ -13,6 +13,7 @@ urlpatterns = [
     path("api/cart/decrease/", views.decrease_from_cart),       
     path("api/cart/remove/", views.remove_from_cart),
     path("api/cart/checkout/", views.checkout),
+    path('api/accounts/<int:account_id>/addresses/', views.address_list, name='address_list'),
 
     #Products
     path('api/products/', views.product_list, name='product_list'),
