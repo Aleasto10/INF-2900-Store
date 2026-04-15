@@ -63,6 +63,8 @@ let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
 //array of filtered items from products, as { title, value } objects for navigation
 const filteredItems = ref<{ title: string; value: number }[]>([])
+
+//the product id. It's used for manipulating product id in the second watcher
 const selectedProduct = ref<number | null>(null)
 
 const account = computed(() => {
