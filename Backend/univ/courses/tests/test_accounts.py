@@ -1,4 +1,5 @@
 from django.test import TestCase
+import unittest
 
 # importing the service functions and model from our app
 from courses import account as account_service
