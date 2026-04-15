@@ -8,8 +8,11 @@
     <!-- Search bar-->
     <v-card>
       <v-autocomplete
+      v-model="selectedProduct"
       v-model:search="searchInput"
       :items="filteredItems"
+      item-title="title"
+      item-value="value"
       :loading="loading"
       autocomplete="off"
       class="mx-auto"
@@ -46,7 +49,6 @@
 //checks on re-render of nav-bar if user's admin status = true, used in v-if checks on router links to
 //have access control
 import { onMounted, computed, ref, watch} from 'vue'
-import { useRouter } from 'vue-router'
 import api from '../api'
 import { de, tr } from 'vuetify/locale'
 import { filterItems } from 'vuetify/lib/composables/filter.mjs'
@@ -59,10 +61,9 @@ const products = ref<Product[]>()
 const searchInput = ref('')
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-//array of filtered items from products. Currently as an array of product names
-const filteredItems = ref<string[]>([]) 
-
-//const router = useRouter()
+//array of filtered items from products, as { title, value } objects for navigation
+const filteredItems = ref<{ title: string; value: number }[]>([])
+const selectedProduct = ref<number | null>(null)
 
 const account = computed(() => {
 const raw = localStorage.getItem('account')
@@ -93,12 +94,22 @@ watch(searchInput, (val) => {
     loading.value = true
     debounceTimer = setTimeout(() => {
       filteredItems.value = products.value
-        ?.map(p => p.name)
-        .filter(name => name.toLowerCase().includes(val.toLowerCase())) ?? []
+        ?.filter(p => p.name.toLowerCase().includes(val.toLowerCase()))
+        .map(p => ({ title: p.name, value: p.id })) ?? []
       loading.value = false
     }, 300) // 300ms delay
   } catch (e: any) { 
     console.log("error with a state change")
+  }
+})
+
+//Constantly checking if the product id has changed. 
+watch(selectedProduct, (id) => {
+  if (id !== null) {
+    //reloads the entire page with the given ID
+    window.location.href = `/product/${id}`
+    selectedProduct.value = null
+    searchInput.value = ''
   }
 })
 
