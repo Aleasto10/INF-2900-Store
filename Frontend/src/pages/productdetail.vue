@@ -19,11 +19,12 @@ const product = ref<Product | null>(null)
 const addingProductId = ref<number | null>(null)
 const accountId = 1 
 
+//adding an item to cart based on product id
 async function addToCart(id: number) {
   addingProductId.value = id
   try {
     await api.post('/cart/add/', {
-      account_id: accountId,
+      account_id: accountId, //Need to tie account ID of the logged in user account
       product_id: id,
       quantity: 1
     })
@@ -34,11 +35,14 @@ async function addToCart(id: number) {
   }
 }
 
+
+//Fetching product from back end using product id
 async function fetchProduct() {
   try {
     const { data } = await api.get(`/products/${route.params.id}/`)
     product.value = data
   } catch (error) {
+    //returns to product page
     console.error("Product not found", error)
     router.push('/products')
   }
