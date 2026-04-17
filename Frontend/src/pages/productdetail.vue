@@ -22,9 +22,10 @@ const accountId = 1
 //adding an item to cart based on product id
 async function addToCart(id: number) {
   addingProductId.value = id
+
   try {
     await api.post('/cart/add/', {
-      account_id: accountId, //Need to tie account ID of the logged in user account
+      account_id: accountId, 
       product_id: id,
       quantity: 1
     })
@@ -35,12 +36,20 @@ async function addToCart(id: number) {
   }
 }
 
+const testData = ref<Product>({id: 1, name: "asd", description: "asd", price: "asd", stock: 0, 
+  origin: "asd", image: "asd"
+
+})
+
 
 //Fetching product from back end using product id
 async function fetchProduct() {
   try {
+    
     const { data } = await api.get(`/products/${route.params.id}/`)
     product.value = data
+    console.log(product.value)
+
   } catch (error) {
     //returns to product page
     console.error("Product not found", error)
@@ -54,6 +63,7 @@ onMounted(fetchProduct)
 <template>
   <div v-if="product" class="page-wrapper">
     <div class="card">
+      
       
       <div class="image-container">
         <v-img 
@@ -85,6 +95,8 @@ onMounted(fetchProduct)
           :disabled="product.stock <= 0 || addingProductId === product.id"
           @click="addToCart(product.id)" 
         >
+
+        
           <span v-if="addingProductId === product.id">Adding... ⏳</span>
           <span v-else-if="product.stock <= 0">Out of stock ❌</span>
           <span v-else>Add to Cart 🛒</span>

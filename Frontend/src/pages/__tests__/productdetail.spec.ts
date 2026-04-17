@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import ProductDetail from '../productdetail.vue'
 import api from '../../api'
+import { fa } from 'vuetify/locale'
 
 vi.mock('../../api', () => ({
   default: {
@@ -27,10 +28,12 @@ const mockProduct = {
   image: 'https://example.com/image.jpg',
 }
 
+//Mounts the entire ProductDetail. The template, style and script. 
+//Replace the Vuetify tags VImg and VChip as stubs. Instead of rendering entire tags, it just check the boolean values
 const mountComponent = () =>
   mount(ProductDetail, {
     global: {
-      stubs: { VImg: true, VChip: true },
+      stubs: { 'v-img': true, 'v-chip': true },
     },
   })
 
@@ -41,6 +44,10 @@ describe('ProductDetail', () => {
 
   // ── Rendering ──────────────────────────────────────────────────────────────
 
+  //vi.mocked mocks the imported function "api". mocked is used for exported functions. 
+  //flushPromises makes sure that mocked api.get finishes before testing
+  //mockResolvedValue intercepts the http request and returns mockProduct
+
   it('renders nothing before product loads', async () => {
     vi.mocked(api.get).mockReturnValue(new Promise(() => {})) // never resolves
     const wrapper = mountComponent()
@@ -50,9 +57,9 @@ describe('ProductDetail', () => {
   it('renders product name, price, and description after fetch', async () => {
     vi.mocked(api.get).mockResolvedValue({ data: mockProduct })
     const wrapper = mountComponent()
-    await flushPromises()
+    await flushPromises() 
 
-    expect(wrapper.find('h1.title').text()).toBe('Test Product')
+    expect(wrapper.find('.title').text()).toBe('Test Product')
     expect(wrapper.find('.price').text()).toContain('$12.99')
     expect(wrapper.find('.description').text()).toBe('A great product')
   })
@@ -86,7 +93,7 @@ describe('ProductDetail', () => {
 
     const button = wrapper.find('button.add-to-cart-button')
     expect(button.text()).toContain('Add to Cart')
-    expect(button.attributes('disabled')).toBeUndefined()
+    expect(button.attributes('disabled')).toBeUndefined() //disabled == false
   })
 
   it('shows "Out of stock" and disables button when stock is 0', async () => {
@@ -121,7 +128,7 @@ describe('ProductDetail', () => {
 
   it('calls api.post with correct payload when Add to Cart is clicked', async () => {
     vi.mocked(api.get).mockResolvedValue({ data: mockProduct })
-    vi.mocked(api.post).mockResolvedValue({})
+    vi.mocked(api.post).mockResolvedValue({}) //Ensures that POST request receives nothing
     const wrapper = mountComponent()
     await flushPromises()
 
@@ -135,6 +142,7 @@ describe('ProductDetail', () => {
     })
   })
 
+  //
   it('shows "Adding..." and disables button while cart request is in flight', async () => {
     vi.mocked(api.get).mockResolvedValue({ data: mockProduct })
     let resolvePost!: () => void
