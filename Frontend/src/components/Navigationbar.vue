@@ -29,12 +29,10 @@
     </v-card> 
 
     <v-sheet class="nav-links">
-      <router-link to="/">Home</router-link>
+      <router-link to="/">Products</router-link>
       <router-link v-if="!isAdmin && account" to="/cart">&#128722</router-link>
-      <router-link v-if="account" to="/account">Account</router-link>
       <router-link v-if="isAdmin" to="/productmanagement">Product management</router-link>
-      <router-link v-if="!isAdmin && account" to="/address">Address</router-link>
-      <router-link to="/products">Products</router-link>
+      <router-link v-if="!isAdmin && account" to="/addresses">Addresses</router-link>
 
       <!-- added temporarily -->
       <router-link v-if="!account" to="/login">Log in</router-link>
