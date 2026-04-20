@@ -46,7 +46,7 @@ describe('ProductDetail', () => {
 
   //vi.mocked mocks the imported function "api". mocked is used for exported functions. 
   //flushPromises makes sure that mocked api.get finishes before testing
-  //mockResolvedValue intercepts the http request and returns mockProduct
+  //mockResolvedValue intercepts the http request and returns 'mockProduct'
 
   it('renders nothing before product loads', async () => {
     vi.mocked(api.get).mockReturnValue(new Promise(() => {})) // never resolves
@@ -142,7 +142,7 @@ describe('ProductDetail', () => {
     })
   })
 
-  //
+  
   it('shows "Adding..." and disables button while cart request is in flight', async () => {
     vi.mocked(api.get).mockResolvedValue({ data: mockProduct })
     let resolvePost!: () => void

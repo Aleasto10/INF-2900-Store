@@ -25,7 +25,7 @@ async function addToCart(id: number) {
 
   try {
     await api.post('/cart/add/', {
-      account_id: accountId, 
+      account_id: accountId, //Need to tie account ID of the logged in user account
       product_id: id,
       quantity: 1
     })
@@ -48,7 +48,6 @@ async function fetchProduct() {
     
     const { data } = await api.get(`/products/${route.params.id}/`)
     product.value = data
-    console.log(product.value)
 
   } catch (error) {
     //returns to product page
@@ -64,7 +63,7 @@ onMounted(fetchProduct)
   <div v-if="product" class="page-wrapper">
     <div class="card">
       
-      
+    
       <div class="image-container">
         <v-img 
           v-if="product.image" 
