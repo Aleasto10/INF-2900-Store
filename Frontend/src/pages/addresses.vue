@@ -81,7 +81,7 @@ const deleteAddress = async (addressId: number) => {
       <h1>My Addresses</h1>
       <button class="add-button" @click="addNewAddress">Add New Address</button>
       <div v-if="addresses.length === 0" class="no-addresses">
-        No addresses found. <button @click="addNewAddress">Add one now</button>
+        No addresses found.
       </div>
       <div v-else class="addresses-list">
         <div v-for="address in addresses" :key="address.id" class="address-card">
