@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
+import { getCurrentUser } from '../utils/auth.ts'
 
 interface Product {
   id: number
@@ -15,11 +16,16 @@ interface Product {
 
 const route = useRoute()
 const router = useRouter()
+const user = getCurrentUser()
+const accountId = user?.id
 const product = ref<Product | null>(null)
 const addingProductId = ref<number | null>(null)
-const accountId = 1 
 
 async function addToCart(id: number) {
+  if (!accountId) {
+    alert("You must be logged in")
+    return
+  }
   addingProductId.value = id
   try {
     await api.post('/cart/add/', {

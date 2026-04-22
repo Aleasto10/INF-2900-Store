@@ -2,13 +2,15 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api'
+import { getCurrentUser } from '../utils/auth.ts'
 
 // state stuff
+const user = getCurrentUser()
+const accountId = user?.id
 const products = ref<Product[]>([])
 const loading = ref(true)
 const error = ref('')
 const addingProductId = ref<number | null>(null) // keeps track of which button says "adding..."
-const accountId = 1 // hardcoded for testing, change later
 
 const router = useRouter()
 
@@ -40,6 +42,10 @@ async function fetchProducts() {
 
 // add item to cart
 async function addToCart(id: number) {
+  if (!accountId) {
+    alert("You must be logged in")
+    return
+  }
   addingProductId.value = id // trigger loading state on button
   try {
     await api.post('/cart/add/', {

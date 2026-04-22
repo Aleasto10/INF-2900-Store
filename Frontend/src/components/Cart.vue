@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue"
 import { useRouter } from 'vue-router'
 import api from '../api'
+import { getCurrentUser } from '../utils/auth.ts'
 
 interface CartItemType {
   product_id: number
@@ -12,11 +13,16 @@ interface CartItemType {
 }
 
 const cart = ref<CartItemType[]>([])
-const accountId = 1 // FOR TESTING
+const user = getCurrentUser()
+const accountId = user?.id
 const router = useRouter()
 
 async function fetchCart() {
   try {
+    if (!accountId) {
+      console.error("No user logged in")
+      return
+    }
     const { data } = await api.get(`/cart/${accountId}/`)
     if (data.items) {
       cart.value = data.items
