@@ -27,12 +27,13 @@ interface Product {
   image: string
 }
 
-//Sending a GET request for getting the data from product table
+// gets all products from the db
+// inputs: none
+// outputs: fills the products array with data from the product table
 async function fetchProducts() {
   try {
     const { data } = await api.get<Product[]>('/products/')
-    products.value = data // This is an array of records from product table
-
+    products.value = data 
   } catch (e: any) {
     error.value = e.message
   } finally {
@@ -40,13 +41,16 @@ async function fetchProducts() {
   }
 }
 
-// add item to cart
+// adds a specific item to the cart
+// inputs: id (the product id)
+// outputs: sends a post request to the api, alerts if not logged in
 async function addToCart(id: number) {
+  // check if user is logged in first
   if (!accountId) {
     alert("You must be logged in")
     return
   }
-  addingProductId.value = id // trigger loading state on button
+  addingProductId.value = id // trigger loading state on the button we just clicked
   try {
     await api.post('/cart/add/', {
       account_id: accountId,
@@ -57,7 +61,7 @@ async function addToCart(id: number) {
   } catch (error) {
     console.error("error adding to cart", error)
   } finally {
-    addingProductId.value = null // reset button
+    addingProductId.value = null // reset button text
   }
 }
 </script>
