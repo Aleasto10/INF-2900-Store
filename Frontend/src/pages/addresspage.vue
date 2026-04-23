@@ -1,8 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
-const fullName = ref('')
-const email = ref('')
+type StoredAccount = {
+  id: number
+  name?: string
+  email?: string
+}
+
+type SavedAddress = {
+  id: number
+  account_id: number
+  phone_number: string
+  line1: string
+  line2: string
+  city: string
+  state: string
+  postal_code: string
+  country: string
+}
+
+const router = useRouter()
+const route = useRoute()
+
 const phoneNumber = ref('')
 const streetAddress = ref('')
 const apartment = ref('')
@@ -11,11 +31,71 @@ const state = ref('')
 const zipCode = ref('')
 const country = ref('United States')
 
-const submitAddress = () => {
-  console.log('Address submitted:')
-  console.log({
-    fullName: fullName.value,
-    email: email.value,
+const isEditing = ref(false)
+const editingAddressId = ref<number | null>(null)
+
+const savedAccount = ref<StoredAccount | null>(null)
+const savedAddress = ref<SavedAddress | null>(null)
+
+const validationMessage = ref('')
+
+const isFormValid = computed(() => {
+  return (
+    phoneNumber.value.trim().length > 0 &&
+    streetAddress.value.trim().length > 0 &&
+    city.value.trim().length > 0 &&
+    state.value.trim().length > 0 &&
+    zipCode.value.trim().length > 0 &&
+    country.value.trim().length > 0
+  )
+})
+
+onMounted(async () => {
+  const storedAccount = localStorage.getItem('account')
+
+  if (storedAccount) {
+    try {
+      savedAccount.value = JSON.parse(storedAccount)
+    } catch {
+      savedAccount.value = null
+    }
+  }
+
+  const editId = route.query.edit as string
+  if (editId) {
+    isEditing.value = true
+    editingAddressId.value = parseInt(editId)
+    await loadAddressForEdit()
+  }
+
+})
+
+const loadAddressForEdit = async () => {
+  if (!savedAccount.value || !editingAddressId.value) return
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/api/accounts/${savedAccount.value.id}/addresses/${editingAddressId.value}/`)
+    if (response.ok) {
+      const address = await response.json()
+      phoneNumber.value = address.phone_number
+      streetAddress.value = address.line1
+      apartment.value = address.line2
+      city.value = address.city
+      state.value = address.state
+      zipCode.value = address.postal_code
+      country.value = address.country
+    } else {
+      alert('Failed to load address for editing')
+      router.push('/addresses')
+    }
+  } catch (error) {
+    console.error('Error loading address:', error)
+  }
+}
+
+
+
+const submitAddress = async () => {
+  const payload = {
     phoneNumber: phoneNumber.value,
     streetAddress: streetAddress.value,
     apartment: apartment.value,
@@ -23,7 +103,82 @@ const submitAddress = () => {
     state: state.value,
     zipCode: zipCode.value,
     country: country.value
-  })
+  }
+
+  if (!isFormValid.value) {
+    validationMessage.value = 'Please fill in all required fields before saving.'
+    return
+  }
+
+  validationMessage.value = ''
+  const storedAccount = localStorage.getItem('account')
+  if (!storedAccount) {
+    alert('No logged in account found.')
+    return
+  }
+
+  const account = JSON.parse(storedAccount) as StoredAccount
+
+  try {
+    let response
+    if (isEditing.value && editingAddressId.value) {
+      // Update
+      response = await fetch(`http://127.0.0.1:8000/api/accounts/${account.id}/addresses/${editingAddressId.value}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone_number: phoneNumber.value,
+          line1: streetAddress.value,
+          line2: apartment.value,
+          city: city.value,
+          state: state.value,
+          postal_code: zipCode.value,
+          country: country.value
+        })
+      })
+    } else {
+      // Create
+      response = await fetch(`http://127.0.0.1:8000/api/accounts/${account.id}/addresses/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone_number: phoneNumber.value,
+          line1: streetAddress.value,
+          line2: apartment.value,
+          city: city.value,
+          state: state.value,
+          postal_code: zipCode.value,
+          country: country.value
+        })
+      })
+    }
+
+    const text = await response.text()
+    let data: any
+
+    try {
+      data = JSON.parse(text)
+    } catch {
+      data = { error: text }
+    }
+
+    if (!response.ok) {
+      console.error('Backend error:', data)
+      alert(data.error || 'Failed to save address')
+      return
+    }
+
+    validationMessage.value = ''
+    alert(isEditing.value ? 'Address updated successfully' : 'Address saved successfully')
+    router.push('/addresses')
+  } catch (error) {
+    console.error('Failed to save address:', error)
+    alert('Something went wrong while saving the address')
+  }
 }
 </script>
 
@@ -31,33 +186,14 @@ const submitAddress = () => {
   <div class="address-page">
     <div class="address-card">
       <div class="card-header">
-        <div class="icon-box">📦</div>
-        <h1>Shipping Address</h1>
+        <h1>{{ isEditing ? 'Edit Address' : 'Shipping Address' }}</h1>
       </div>
 
-      <form class="address-form" @submit.prevent="submitAddress">
-        <div class="form-row two-columns">
-          <div class="form-group">
-            <label for="fullName">Full Name *</label>
-            <input
-              id="fullName"
-              type="text"
-              placeholder="Mike Hawk"
-              v-model="fullName"
-            />
-          </div>
+      <div v-if="validationMessage" class="form-error">
+        {{ validationMessage }}
+      </div>
 
-          <div class="form-group">
-            <label for="email">Email Address *</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="bob@example.com"
-              v-model="email"
-            />
-          </div>
-        </div>
-
+      <form class="address-form" @submit.prevent="submitAddress" novalidate>
         <div class="form-row">
           <div class="form-group">
             <label for="phoneNumber">Phone Number *</label>
@@ -66,6 +202,7 @@ const submitAddress = () => {
               type="text"
               placeholder="+47 123 45 678"
               v-model="phoneNumber"
+              required
             />
           </div>
         </div>
@@ -78,6 +215,7 @@ const submitAddress = () => {
               type="text"
               placeholder="skippergata 123"
               v-model="streetAddress"
+              required
             />
           </div>
         </div>
@@ -102,6 +240,7 @@ const submitAddress = () => {
               type="text"
               placeholder="Tromsø"
               v-model="city"
+              required
             />
           </div>
 
@@ -112,6 +251,7 @@ const submitAddress = () => {
               type="text"
               placeholder="Troms"
               v-model="state"
+              required
             />
           </div>
 
@@ -122,6 +262,7 @@ const submitAddress = () => {
               type="text"
               placeholder="1001"
               v-model="zipCode"
+              required
             />
           </div>
         </div>
@@ -129,7 +270,7 @@ const submitAddress = () => {
         <div class="form-row">
           <div class="form-group">
             <label for="country">Country *</label>
-            <select id="country" v-model="country">
+            <select id="country" v-model="country" required>
               <option>Norway</option>
               <option>Sweden</option>
               <option>United Kingdom</option>
@@ -141,7 +282,7 @@ const submitAddress = () => {
         </div>
 
         <div class="form-actions">
-          <button type="submit">Save Address</button>
+          <button type="submit">{{ isEditing ? 'Update Address' : 'Save Address' }}</button>
         </div>
       </form>
     </div>
@@ -241,6 +382,15 @@ const submitAddress = () => {
   color: #8d96a3;
 }
 
+.form-error {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  color: #842029;
+  background: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 12px;
+}
+
 .form-group input:focus,
 .form-group select:focus {
   border-color: #8a8a8a;
@@ -278,6 +428,11 @@ const submitAddress = () => {
 
   .address-card {
     padding: 22px 18px;
+  }
+
+  .autofill-preview {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

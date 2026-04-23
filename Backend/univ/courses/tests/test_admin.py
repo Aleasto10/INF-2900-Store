@@ -1,16 +1,18 @@
 from django.test import TestCase
 from decimal import Decimal
-
+import unittest
 
 from courses import admin as admin_service
 from courses import account as account_service
 from courses import product as product_service
 
+
 class AdminServiceTests(TestCase):
     """Tests for the admin wrapper functions defined in `courses/admin.py`."""
 
+    IMAGE_URL = "https://example.com/product.jpg"
+
     def setUp(self):
-     
         self.admin = account_service.create_account(
             name="Admin", password="adminpw", email="admin@example.com", admin_status=True
         )
@@ -18,15 +20,20 @@ class AdminServiceTests(TestCase):
             name="User", password="userpw", email="user@example.com", admin_status=False
         )
 
- 
     def test_is_admin(self):
         self.assertTrue(admin_service.is_admin(self.admin.id))
         self.assertFalse(admin_service.is_admin(self.user.id))
-        self.assertFalse(admin_service.is_admin(999999))  # non-existent
+        self.assertFalse(admin_service.is_admin(999999))
 
     def test_admin_create_product_success(self):
         p = admin_service.admin_create_product(
-            self.admin.id, "brazil box", "campeo de mundo", Decimal("10.00"), 5, "Brazil"
+            self.admin.id,
+            "brazil box",
+            "campeo de mundo",
+            Decimal("10.00"),
+            5,
+            "Brazil",
+            self.IMAGE_URL,
         )
         self.assertIsNotNone(p.id)
         self.assertEqual(p.name, "brazil box")
@@ -34,16 +41,28 @@ class AdminServiceTests(TestCase):
         self.assertEqual(p.price, Decimal("10.00"))
         self.assertEqual(p.stock_quantity, 5)
         self.assertEqual(p.origin_country, "Brazil")
+        self.assertEqual(p.image, self.IMAGE_URL)
 
     def test_admin_create_product_permission_denied(self):
         with self.assertRaises(PermissionError):
             admin_service.admin_create_product(
-                self.user.id, "Coffee", "Beans", Decimal("10.00"), 5, "Brazil"
+                self.user.id,
+                "Coffee",
+                "Beans",
+                Decimal("10.00"),
+                5,
+                "Brazil",
+                self.IMAGE_URL,
             )
 
     def test_admin_update_product_success(self):
         p = product_service.create_product(
-            name="old box", description="lame", price=Decimal("1.00"), stock=1, origin="norway"
+            name="old box",
+            description="lame",
+            price=Decimal("1.00"),
+            stock=1,
+            origin="norway",
+            image="https://example.com/old.jpg",
         )
 
         admin_service.admin_update_product(
@@ -54,6 +73,7 @@ class AdminServiceTests(TestCase):
             price=Decimal("2.50"),
             stock=10,
             origin="sweden",
+            image="https://example.com/new.jpg"
         )
 
         refreshed = product_service.get_product_by_id(p.id)
@@ -62,23 +82,34 @@ class AdminServiceTests(TestCase):
         self.assertEqual(refreshed.price, Decimal("2.50"))
         self.assertEqual(refreshed.stock_quantity, 10)
         self.assertEqual(refreshed.origin_country, "sweden")
+        self.assertEqual(refreshed.image, "https://example.com/new.jpg") 
 
     def test_admin_update_product_permission_denied(self):
         p = product_service.create_product(
-            name="old box", description="lame", price=Decimal("1.00"), stock=1, origin="norway"
+            name="old box",
+            description="lame",
+            price=Decimal("1.00"),
+            stock=1,
+            origin="norway",
+            image=self.IMAGE_URL,
         )
         with self.assertRaises(PermissionError):
             admin_service.admin_update_product(self.user.id, p.id, name="Nope")
 
     def test_admin_delete_product_success_and_permission_denied(self):
         p = product_service.create_product(
-            name="X", description="Y", price=Decimal("3.00"), stock=2, origin="norway"
+            name="X",
+            description="Y",
+            price=Decimal("3.00"),
+            stock=2,
+            origin="norway",
+            image=self.IMAGE_URL,
         )
         with self.assertRaises(PermissionError):
             admin_service.admin_delete_product(self.user.id, p.id)
+
         admin_service.admin_delete_product(self.admin.id, p.id)
         self.assertIsNone(product_service.get_product_by_id(p.id))
-
 
     def test_admin_create_account_success(self):
         new_acc = admin_service.admin_create_account(
@@ -127,5 +158,5 @@ class AdminServiceTests(TestCase):
         self.assertIsNone(account_service.get_account_by_id(target.id))
 
 
-def __main__():
+if __name__ == "__main__":
     unittest.main()

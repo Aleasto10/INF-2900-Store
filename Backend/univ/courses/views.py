@@ -14,8 +14,11 @@ from .forms import LoginForm, SignUpForm
 from django.shortcuts import render, redirect
 from . import account
 from .models import Account, Product, Course
+from .models import Course, Account, Address
+from . import address as address_service
 from .cart import (
     get_or_create_cart,
+    get_active_cart,
     add_product_to_cart,
     decrease_product_from_cart,
     remove_product_from_cart,
@@ -105,6 +108,16 @@ def login_view(request):
         }
     })
 
+
+# POST logout - delete session token
+@api_view(['POST'])
+def logout_view(request):
+    token = request.data.get("token")
+    if not token:
+        return Response({"error": "Token required."}, status=status.HTTP_400_BAD_REQUEST)
+    account.delete_session(token)
+    return Response({"message": "Logged out successfully."})
+
 # --- Cart API ---
 
 def get_cart(request, account_id):
@@ -117,7 +130,8 @@ def get_cart(request, account_id):
             "product_id": item.product.id,
             "name": item.product.name,
             "price": float(item.product.price),
-            "quantity": item.item_quantity
+            "quantity": item.item_quantity,
+            "image": item.product.image
         })
 
     return JsonResponse({
@@ -175,16 +189,8 @@ def product_to_dict(p):
         "price": str(p.price),
         "stock": p.stock_quantity,
         "origin": p.origin_country,
-<<<<<<< HEAD
-<<<<<<< HEAD
-        "image": p.image
-=======
         "image": p.image if p.image else ""
->>>>>>> develop
-=======
-        "image": p.image
-        "image": p.image if p.image else ""
->>>>>>> 2135d403792c626648c233e84209b893a0473978
+
     }
 
 
@@ -245,4 +251,72 @@ def product_detail(request, pk):
         # DELETE
         product_service.delete_product(pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+# -- Address API (@api_view) ---
 
+def address_to_dict(a):
+    return {
+        "id": a.id,
+        "account_id": a.account.id,
+        "phone_number": a.phone_number,
+        "line1": a.line1,
+        "line2": a.line2,
+        "city": a.city,
+        "state": a.state,
+        "postal_code": a.postal_code,
+        "country": a.country,
+    }
+
+
+@api_view(['GET', 'POST'])
+def address_list(request, account_id):
+    try:
+        acc = Account.objects.get(id=account_id)
+    except Account.DoesNotExist:
+        return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        addresses = address_service.get_addresses_for_account(acc)
+        return Response([address_to_dict(a) for a in addresses])
+
+    a = address_service.create_address(
+        account=acc,
+        phone_number=request.data["phone_number"],
+        line1=request.data["line1"],
+        line2=request.data.get("line2", ""),
+        city=request.data["city"],
+        state=request.data["state"],
+        postal_code=request.data["postal_code"],
+        country=request.data["country"],
+    )
+    return Response(address_to_dict(a), status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def address_detail(request, account_id, address_id):
+    try:
+        acc = Account.objects.get(id=account_id)
+        address = Address.objects.get(id=address_id, account=acc)
+    except Account.DoesNotExist:
+        return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Address.DoesNotExist:
+        return Response({"error": "Address not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        return Response(address_to_dict(address))
+    elif request.method == 'PUT':
+        address_service.update_address(
+            address.id,
+            phone_number=request.data.get("phone_number"),
+            line1=request.data.get("line1"),
+            line2=request.data.get("line2"),
+            city=request.data.get("city"),
+            state=request.data.get("state"),
+            postal_code=request.data.get("postal_code"),
+            country=request.data.get("country")
+        )
+        address.refresh_from_db()
+        return Response(address_to_dict(address))
+    elif request.method == 'DELETE':
+        address_service.delete_address(address.id)
+        return Response(status=status.HTTP_204_NO_CONTENT)

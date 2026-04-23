@@ -65,6 +65,19 @@ class CartItem(models.Model):
 
     def __str__(self): return f"{self.product.name} ({self.item_quantity})"
 
+class Address(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=20, null=False, blank=False)
+    line1 = models.CharField(max_length=255, null=False, blank=False)
+    line2 = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=100, null=False, blank=False)
+    state = models.CharField(max_length=100, null=False, blank=False)
+    postal_code = models.CharField(max_length=20, null=False, blank=False)
+    country = models.CharField(max_length=100, null=False, blank=False)
+
+    def __str__(self):
+        return f"{self.line1}, {self.city}, {self.country}"
+
 #Session model for storing valid login sessions
 
 class Session(models.Model):
