@@ -5,12 +5,12 @@ import api from '../api'
 import { getCurrentUser } from '../utils/auth.ts'
 
 // state stuff
-const user = getCurrentUser()
-const accountId = user?.id
 const products = ref<Product[]>([])
 const loading = ref(true)
 const error = ref('')
 const addingProductId = ref<number | null>(null) // keeps track of which button says "adding..."
+const storedAccount = localStorage.getItem('account')
+const accountId = storedAccount ? JSON.parse(storedAccount).id : null
 
 const router = useRouter()
 

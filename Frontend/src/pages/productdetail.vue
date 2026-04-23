@@ -17,10 +17,11 @@ interface Product {
 // state stuff
 const route = useRoute()
 const router = useRouter()
-const user = getCurrentUser()
-const accountId = user?.id
 const product = ref<Product | null>(null)
 const addingProductId = ref<number | null>(null)
+const storedAccount = localStorage.getItem('account')
+const accountId = storedAccount ? JSON.parse(storedAccount).id : null
+
 
 //adding an item to cart based on product id
 async function addToCart(id: number) {
