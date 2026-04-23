@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
+import { getCurrentUser } from '../utils/auth.ts'
 
 interface Product {
   id: number
@@ -13,6 +14,7 @@ interface Product {
   image: string
 }
 
+// state stuff
 const route = useRoute()
 const router = useRouter()
 const product = ref<Product | null>(null)
@@ -21,7 +23,14 @@ const storedAccount = localStorage.getItem('account')
 const accountId = storedAccount ? JSON.parse(storedAccount).id : null
 
 
+// adds this specific item to the cart
+// inputs: id (product id)
+// outputs: api call to add it to db, alerts if user isnt logged in
 async function addToCart(id: number) {
+  if (!accountId) {
+    alert("You must be logged in")
+    return
+  }
   addingProductId.value = id
   try {
     await api.post('/cart/add/', {
@@ -36,6 +45,9 @@ async function addToCart(id: number) {
   }
 }
 
+// fetches the single product based on the url
+// inputs: none (reads the id from the route params)
+// outputs: updates the product ref, routes back to products if it fails
 async function fetchProduct() {
   try {
     const { data } = await api.get(`/products/${route.params.id}/`)
@@ -46,6 +58,7 @@ async function fetchProduct() {
   }
 }
 
+// grab the product when the page loads
 onMounted(fetchProduct)
 </script>
 
