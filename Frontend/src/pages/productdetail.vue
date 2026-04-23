@@ -23,18 +23,17 @@ const storedAccount = localStorage.getItem('account')
 const accountId = storedAccount ? JSON.parse(storedAccount).id : null
 
 
-// adds this specific item to the cart
-// inputs: id (product id)
-// outputs: api call to add it to db, alerts if user isnt logged in
+//adding an item to cart based on product id
 async function addToCart(id: number) {
   if (!accountId) {
     alert("You must be logged in")
     return
   }
   addingProductId.value = id
+
   try {
     await api.post('/cart/add/', {
-      account_id: accountId,
+      account_id: accountId, //Need to tie account ID of the logged in user account
       product_id: id,
       quantity: 1
     })
@@ -50,9 +49,12 @@ async function addToCart(id: number) {
 // outputs: updates the product ref, routes back to products if it fails
 async function fetchProduct() {
   try {
+    
     const { data } = await api.get(`/products/${route.params.id}/`)
     product.value = data
+
   } catch (error) {
+    //returns to product page
     console.error("Product not found", error)
     router.push('/products')
   }
@@ -66,6 +68,7 @@ onMounted(fetchProduct)
   <div v-if="product" class="page-wrapper">
     <div class="card">
       
+    
       <div class="image-container">
         <v-img 
           v-if="product.image" 
@@ -96,6 +99,8 @@ onMounted(fetchProduct)
           :disabled="product.stock <= 0 || addingProductId === product.id"
           @click="addToCart(product.id)" 
         >
+
+        
           <span v-if="addingProductId === product.id">Adding... ⏳</span>
           <span v-else-if="product.stock <= 0">Out of stock ❌</span>
           <span v-else>Add to Cart 🛒</span>
