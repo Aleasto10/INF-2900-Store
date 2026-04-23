@@ -17,7 +17,9 @@ const route = useRoute()
 const router = useRouter()
 const product = ref<Product | null>(null)
 const addingProductId = ref<number | null>(null)
-const accountId = 1 
+const storedAccount = localStorage.getItem('account')
+const accountId = storedAccount ? JSON.parse(storedAccount).id : null
+
 
 async function addToCart(id: number) {
   addingProductId.value = id

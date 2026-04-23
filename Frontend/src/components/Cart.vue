@@ -12,7 +12,8 @@ interface CartItemType {
 }
 
 const cart = ref<CartItemType[]>([])
-const accountId = 1 // FOR TESTING
+const storedAccount = localStorage.getItem('account')
+const accountId = storedAccount ? JSON.parse(storedAccount).id : null
 const router = useRouter()
 
 async function fetchCart() {
