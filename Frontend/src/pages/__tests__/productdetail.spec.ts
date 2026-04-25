@@ -45,6 +45,7 @@ describe('ProductDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(window, 'alert').mockImplementation(() => {})
   })
 
   // ── Rendering ──────────────────────────────────────────────────────────────
@@ -130,6 +131,19 @@ describe('ProductDetail', () => {
   })
 
   // ── addToCart ──────────────────────────────────────────────────────────────
+   it('calls api.post with correct payload and undefine id', async () => {
+    vi.mocked(api.get).mockResolvedValue({ data: mockProduct }) //ensures that GET request receives the mock product 
+    vi.mocked(api.post).mockResolvedValue({}) //Ensures that POST request receives nothing
+    vi.mocked(auth.getCurrentUser).mockReturnValue({ id: null }) //ensures that the mock function receives null as ID
+    const wrapper = mountComponent()
+    await flushPromises()
+
+    await wrapper.find('button.add-to-cart-button').trigger('click')
+    await flushPromises()
+
+    expect(api.post).not.toHaveBeenCalledWith() //addToCart returns without 
+  })
+
 
   it('calls api.post with correct payload when Add to Cart is clicked', async () => {
     vi.mocked(api.get).mockResolvedValue({ data: mockProduct }) //ensures that GET request receives the mock product 
