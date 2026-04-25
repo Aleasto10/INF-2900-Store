@@ -14,8 +14,7 @@ interface CartItemType {
 
 // state stuff
 const cart = ref<CartItemType[]>([])
-const storedAccount = localStorage.getItem('account')
-const accountId = storedAccount ? JSON.parse(storedAccount).id : null
+const accountId = getCurrentUser()?.id
 const router = useRouter()
 
 // grabs the cart data for the logged in user
