@@ -16,6 +16,7 @@ const testAccounts: accountInfo[] = [
 //replace testAccounts with an empty array (i.e []) after removing testAccounts 
 const account = ref<accountInfo[]>(testAccounts) 
 const AccountInfos = <accountInfo | any>ref(null)
+const errMsg = ref('')
 
 interface accountInfo { 
     id: number, 
@@ -27,7 +28,12 @@ interface accountInfo {
 }
 
 //This takes an account id, searches the account array to find the right object and returns it
-const displayingDetails = (id: number) => AccountInfos.value = account.value.find(a => a.id === id) ?? null
+//It also resets the errMsg object so that the account details can be displayed
+function displayingDetails (id: number){
+  errMsg.value = ''
+  AccountInfos.value = account.value.find(a => a.id === id) ?? null
+  
+}
 
 /* ==================== HTTP REQUESTS ==================== */
 
@@ -36,11 +42,11 @@ const fetchUser = async () => {
 
   try { 
     const response = await api.get('/getUser/')
-    
     account.value = response.data
   
-  } catch (error){
-    console.log('error')
+  } catch (error: any){
+    
+    errMsg.value = "Could not get user. Status code:" + error.response.status
   }
 }
 
@@ -52,9 +58,8 @@ const deleteAccount = async (id:number) => {
     const response = await api.delete('/deleteUser/')
     console.log(response.status)
     
-  } catch (error){
-    console.log(id)
-    console.log('error')
+  } catch (error: any){
+    errMsg.value = "Could not delete user. Status code:" + error.response.status
   }  
 }
 
@@ -66,8 +71,8 @@ const editAccount = async (id:number) => {
     console.log(response.status)
     
     
-  } catch (error){
-    console.log('error')
+  } catch (error:any){
+    errMsg.value = "Could not edit user details. Status code:" + error.response.status
   }  
 }
 
@@ -125,13 +130,18 @@ onMounted(() => {
 
         
             <v-col>
-                <v-card height="320">
+                <v-card v-if ="!errMsg" height="320">
                     <!-- the texts are binded to "AccountInfos"-->
                     <v-card-text >Email: {{ AccountInfos?.email }} </v-card-text>
                     <v-card-text >name: {{ AccountInfos?.name }} </v-card-text>
                     <v-card-text >status: {{ AccountInfos?.admin_status }} </v-card-text>
                     <v-card-text >created date: {{ AccountInfos?.time_created }} </v-card-text>
+
                                         
+                </v-card>
+                <!-- Display if errMsg is not empty-->
+                <v-card v-else-if="errMsg" height="320">
+                  <v-card-text > {{ errMsg }} </v-card-text>
                 </v-card>
             </v-col>
         </v-row>

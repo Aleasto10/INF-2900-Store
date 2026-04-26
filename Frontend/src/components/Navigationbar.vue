@@ -22,7 +22,6 @@
     </div>
   </nav>
 </template>
-
 <script setup lang="ts">
 //checks on re-render of nav-bar if user's admin status = true, used in v-if checks on router links to
 //have access control
