@@ -59,6 +59,7 @@ async function removeItem(id: number) {
   } catch (error: any) {
     if(error.response.status == 500 || error.response.status == 400) 
       alert("The product could not be removed from the cart due to bad request. Please contact support")
+      console.log(`Error code: ${error.response.status}`)
   }
 }
 
@@ -70,6 +71,7 @@ async function checkout() {
   } catch (error: any) {
     if(error.response.status == 500 || error.response.status == 400) 
       alert("something went wrong during checkout")
+      console.log(`Error code: ${error.response.status}`)
   }
 }
 

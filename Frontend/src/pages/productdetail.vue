@@ -28,8 +28,9 @@ async function addToCart(id: number) {
       product_id: id,
       quantity: 1
     })
-  } catch (error) {
+  } catch (error:any) {
     alert("An error has occured while adding product to cart")
+    console.log(`Error code: ${error.response.status}`)
   } finally {
     addingProductId.value = null
   }
@@ -39,9 +40,10 @@ async function fetchProduct() {
   try {
     const { data } = await api.get(`/products/${route.params.id}/`)
     product.value = data
-  } catch (error) {
+  } catch (error: any) {
     alert("Product not found!!!")
     router.push('/products')
+    console.log(`Error code: ${error.response.status}`)
   }
 }
 

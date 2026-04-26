@@ -31,7 +31,7 @@ async function fetchProducts() {
     const { data } = await api.get<Product[]>('/products/')
     products.value = data
   } catch (e: any) {
-    error.value = e.message
+    console.log(e.message)
   } finally {
     loading.value = false
   }
@@ -47,8 +47,9 @@ async function addToCart(id: number) {
       quantity: 1
     })
     console.log("added to cart!")
-  } catch (error) {
-    console.error("error adding to cart", error)
+  } catch (error:any) {
+    alert("An error has occured while adding product to cart")
+    console.log(`Error code: ${error.response.status}`)
   } finally {
     addingProductId.value = null // reset button
   }
