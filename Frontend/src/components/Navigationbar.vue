@@ -47,7 +47,7 @@ const logout = async () => {
     try {
       await api.post('/logout/', { token })
     } catch (e) {
-      console.error('Logout failed', e)
+      alert('Logout failed due to an error with bad request')
     }
   }
   localStorage.removeItem('account')

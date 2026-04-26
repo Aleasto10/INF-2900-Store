@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from "vue"
 import { useRouter } from 'vue-router'
 import api from '../api'
-import axios from "axios"
 
 interface CartItemType {
   product_id: number
