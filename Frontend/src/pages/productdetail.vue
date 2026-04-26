@@ -18,6 +18,7 @@ const router = useRouter()
 const product = ref<Product | null>(null)
 const addingProductId = ref<number | null>(null)
 const accountId = 1 
+const errMsg = ref('')
 
 async function addToCart(id: number) {
   addingProductId.value = id
@@ -28,7 +29,7 @@ async function addToCart(id: number) {
       quantity: 1
     })
   } catch (error) {
-    console.error("Error adding to cart", error)
+    alert("An error has occured while adding product to cart")
   } finally {
     addingProductId.value = null
   }
@@ -39,7 +40,7 @@ async function fetchProduct() {
     const { data } = await api.get(`/products/${route.params.id}/`)
     product.value = data
   } catch (error) {
-    console.error("Product not found", error)
+    alert("Product not found!!!")
     router.push('/products')
   }
 }
