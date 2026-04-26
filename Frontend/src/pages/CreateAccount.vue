@@ -20,7 +20,7 @@ async function createAccount() {
     email.value = ''
     password.value = ''
   } catch (e: any) {
-    if(e.response.status == 400)
+    if(e.response.status == 400) 
       msg.value = "email already exist "
     else if (e.response.status == 500)
       msg.value = "Could not create account. Error from server side"
