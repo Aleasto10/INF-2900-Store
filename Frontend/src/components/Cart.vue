@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue"
 import { useRouter } from 'vue-router'
 import api from '../api'
+import axios from "axios"
 
 interface CartItemType {
   product_id: number
@@ -14,6 +15,7 @@ interface CartItemType {
 const cart = ref<CartItemType[]>([])
 const accountId = 1 // FOR TESTING
 const router = useRouter()
+const errorMsg = ref<string | null>('')
 
 async function fetchCart() {
   try {
@@ -23,8 +25,12 @@ async function fetchCart() {
     } else {
       cart.value = []
     }
-  } catch (error) {
-    console.error("Error fetching cart data:", error)
+  } catch (error: any) {
+    console.log(error.response.status)
+    errorMsg.value = error.response.status
+    
+    if(error.response.status == 500 || error.response.status == 400) 
+      errorMsg.value = "Could not access your cart. Please contact customer support"
   }
 }
 
@@ -51,8 +57,9 @@ async function removeItem(id: number) {
   try {
     await api.post('/cart/remove/', { account_id: accountId, product_id: id })
     fetchCart() 
-  } catch (error) {
-    console.error("Error removing item", error)
+  } catch (error: any) {
+    if(error.response.status == 500 || error.response.status == 400) 
+      alert("The product could not be removed from the cart due to bad request. Please contact support")
   }
 }
 
@@ -61,8 +68,9 @@ async function checkout() {
     await api.post('/cart/checkout/', { account_id: accountId })
     alert("Checked out successfully!")
     fetchCart() 
-  } catch (error) {
-    console.error("Error checking out", error)
+  } catch (error: any) {
+    if(error.response.status == 500 || error.response.status == 400) 
+      alert("something went wrong during checkout")
   }
 }
 
@@ -83,7 +91,7 @@ const total = computed(() =>
         v-if="cart.length === 0"
         style="text-align:center; padding:60px; color:#666;"
       >
-        Your cart is empty.
+        <p>{{ errorMsg }}</p>
       </div>
 
       <div
